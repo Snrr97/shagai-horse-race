@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="mn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шагай — Морин Уралдаан</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+Mongolian:wght@400;700&family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0d0a06;
+            --parchment: #f0e3c2;
+            --parchment-dark: #d9c79e;
+            --gold: #c9962b;
+            --gold-bright: #e8b84a;
+            --red: #9e2a1f;
+            --red-deep: #6b1810;
+            --blue: #1a3a5c;
+            --sky: #7ba0c4;
+            --grass: #6b7c3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background:
+                radial-gradient(ellipse at top, #2a1a0f 0%, #0d0a06 60%),
+                #0d0a06;
+            color: var(--parchment);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Шөнийн тэнгэрийн одод */
+        .stars {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(1px 1px at 10% 20%, #fff 50%, transparent),
+                radial-gradient(1px 1px at 30% 80%, #ffd 50%, transparent),
+                radial-gradient(1px 1px at 60% 15%, #fff 50%, transparent),
+                radial-gradient(1px 1px at 85% 45%, #ffd 50%, transparent),
+                radial-gradient(1px 1px at 45% 65%, #fff 50%, transparent),
+                radial-gradient(2px 2px at 75% 25%, #fff9 50%, transparent),
+                radial-gradient(1px 1px at 15% 55%, #fff 50%, transparent),
+                radial-gradient(1px 1px at 92% 75%, #ffd 50%, transparent);
+            animation: twinkle 4s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from {
+                opacity: .4
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        /* Улсын хээ дэвсгэр */
+        .pattern-border {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            z-index: 5;
+            background:
+                linear-gradient(var(--gold), var(--gold-bright)) 0 0 / 100% 2px no-repeat,
+                linear-gradient(var(--gold), var(--gold-bright)) 0 22px / 100% 2px no-repeat,
+                repeating-linear-gradient(90deg,
+                    var(--red) 0 20px, var(--red-deep) 20px 22px,
+                    var(--red-deep) 22px 24px, var(--red) 24px 44px);
+        }
+
+        .pattern-border.bottom {
+            top: auto;
+            bottom: 0
+        }
+
+        .app {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            padding: 34px 24px 34px;
+        }
+
+        /* Толгой хэсэг */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .title-ornament {
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            background: radial-gradient(circle, var(--gold-bright) 0%, var(--gold) 35%, transparent 70%);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .title-ornament::before {
+            content: "❋";
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            color: var(--ink);
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .title h1 {
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: clamp(20px, 3.2vw, 32px);
+            font-weight: 700;
+            color: var(--gold-bright);
+            letter-spacing: .08em;
+            text-shadow: 0 2px 8px rgba(201, 150, 43, .4);
+            line-height: 1;
+        }
+
+        .title .sub {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: .45em;
+            color: var(--parchment-dark);
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        .players-bar {
+            display: flex;
+            gap: 14px;
+        }
+
+        .player-card {
+            min-width: 160px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, rgba(240, 227, 194, .08), rgba(240, 227, 194, .02));
+            border: 1px solid rgba(201, 150, 43, .35);
+            border-radius: 2px;
+            position: relative;
+            transition: all .4s;
+        }
+
+        .player-card::before,
+        .player-card::after {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border: 1px solid var(--gold);
+        }
+
+        .player-card::before {
+            top: -1px;
+            left: -1px;
+            border-right: 0;
+            border-bottom: 0
+        }
+
+        .player-card::after {
+            bottom: -1px;
+            right: -1px;
+            border-left: 0;
+            border-top: 0
+        }
+
+        .player-card.active {
+            background: linear-gradient(135deg, rgba(201, 150, 43, .25), rgba(158, 42, 31, .15));
+            box-shadow: 0 0 24px rgba(232, 184, 74, .3), inset 0 0 20px rgba(232, 184, 74, .1);
+            animation: card-pulse 2.4s ease-in-out infinite;
+        }
+
+        @keyframes card-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 24px rgba(232, 184, 74, .3), inset 0 0 20px rgba(232, 184, 74, .1);
+            }
+
+            50% {
+                box-shadow: 0 0 36px rgba(232, 184, 74, .55), inset 0 0 26px rgba(232, 184, 74, .18);
+            }
+        }
+
+        .player-card .label {
+            font-family: 'Cinzel', serif;
+            font-size: 9px;
+            letter-spacing: .35em;
+            color: var(--parchment-dark);
+            margin-bottom: 4px;
+        }
+
+        .player-card .name {
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gold-bright);
+        }
+
+        .player-card .progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: 13px;
+            color: var(--parchment);
+        }
+
+        .player-card .progress strong {
+            color: var(--gold-bright);
+            font-weight: 700
+        }
+
+        /* Голч хэсэг — уралдааны зам */
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            min-height: 0;
+        }
+
+        .race-track {
+            position: relative;
+            background:
+                linear-gradient(180deg,
+                    rgba(26, 58, 92, .4) 0%,
+                    rgba(123, 160, 196, .2) 35%,
+                    rgba(107, 124, 58, .3) 55%,
+                    rgba(107, 124, 58, .5) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, .5), 0 0 30px rgba(201, 150, 43, .2);
+        }
+
+        .race-track canvas {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        /* Баруун талын шагай орхих ширээ */
+        .play-panel {
+            display: flex;
+            flex-direction: column;
+            background:
+                repeating-linear-gradient(45deg,
+                    rgba(155, 116, 58, .12) 0 2px,
+                    transparent 2px 8px),
+                linear-gradient(165deg, #2a1a0f 0%, #1a0f08 100%);
+            border: 2px solid var(--gold);
+            border-radius: 3px;
+            padding: 20px;
+            gap: 16px;
+            position: relative;
+        }
+
+        .play-panel::before,
+        .play-panel::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gold-bright);
+        }
+
+        .play-panel::before {
+            top: 6px;
+            left: 6px;
+            border-right: 0;
+            border-bottom: 0
+        }
+
+        .play-panel::after {
+            bottom: 6px;
+            right: 6px;
+            border-left: 0;
+            border-top: 0
+        }
+
+        .panel-title {
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold-bright);
+            text-align: center;
+            letter-spacing: .1em;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(201, 150, 43, .3);
+        }
+
+        /* Шагай орхих талбай */
+        .toss-area {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 12px;
+            padding: 14px;
+            background:
+                radial-gradient(ellipse at center, rgba(158, 42, 31, .15), transparent 70%),
+                repeating-linear-gradient(45deg,
+                    rgba(90, 40, 20, .25) 0 3px,
+                    transparent 3px 7px),
+                #1a0f06;
+            border: 1px solid rgba(201, 150, 43, .25);
+            border-radius: 2px;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            perspective: 800px;
+        }
+
+        .toss-area::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 1px dashed rgba(201, 150, 43, .15);
+            pointer-events: none;
+        }
+
+        .shagai {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            min-width: 0;
+            min-height: 0;
+            background:
+                radial-gradient(ellipse at center,
+                    rgba(240, 227, 194, .07) 0%,
+                    rgba(240, 227, 194, .02) 60%,
+                    transparent 100%);
+            border: 1px solid rgba(201, 150, 43, .2);
+            border-radius: 6px;
+            transition: all .4s cubic-bezier(.4, 0, .2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .shagai::before {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            border: 1px dashed rgba(201, 150, 43, .12);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .shagai.rolling {
+            animation: roll 1.3s cubic-bezier(.34, 1.2, .64, 1);
+        }
+
+        @keyframes roll {
+            0% {
+                transform: translateY(-100px) rotateX(0deg) rotateZ(0deg) scale(.6);
+                opacity: 0
+            }
+
+            15% {
+                opacity: 1
+            }
+
+            30% {
+                transform: translateY(-40px) rotateX(220deg) rotateZ(140deg) scale(1.15)
+            }
+
+            50% {
+                transform: translateY(12px) rotateX(440deg) rotateZ(280deg) scale(.9)
+            }
+
+            65% {
+                transform: translateY(-10px) rotateX(620deg) rotateZ(360deg) scale(1.06)
+            }
+
+            80% {
+                transform: translateY(5px) rotateX(720deg) rotateZ(380deg) scale(.97)
+            }
+
+            100% {
+                transform: translateY(0) rotateX(720deg) rotateZ(360deg) scale(1);
+                opacity: 1
+            }
+        }
+
+        .shagai .face {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+            height: 100%;
+            padding: 6px;
+            font-family: 'Noto Serif Mongolian', serif;
+        }
+
+        .shagai .shagai-svg {
+            width: 78%;
+            max-height: 70%;
+            height: auto;
+            flex: 0 1 auto;
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .55));
+        }
+
+        .shagai .bone-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gold-bright);
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
+        }
+
+        .shagai.morin {
+            background:
+                radial-gradient(ellipse at center,
+                    rgba(232, 184, 74, .25) 0%,
+                    rgba(201, 150, 43, .08) 60%,
+                    transparent 100%);
+            border-color: rgba(232, 184, 74, .55);
+            box-shadow:
+                0 0 24px rgba(232, 184, 74, .45),
+                inset 0 0 16px rgba(232, 184, 74, .1);
+            animation: morin-glow 1.6s ease-in-out infinite alternate;
+        }
+
+        .shagai.morin::before {
+            border-color: rgba(232, 184, 74, .35);
+        }
+
+        .shagai.morin .bone-label {
+            color: #fff;
+            text-shadow: 0 0 8px rgba(232, 184, 74, .9), 0 1px 2px #000;
+        }
+
+        @keyframes morin-glow {
+            from {
+                box-shadow: 0 0 20px rgba(232, 184, 74, .35), inset 0 0 14px rgba(232, 184, 74, .08)
+            }
+
+            to {
+                box-shadow: 0 0 32px rgba(232, 184, 74, .65), inset 0 0 20px rgba(232, 184, 74, .14)
+            }
+        }
+
+        .toss-btn {
+            padding: 16px 20px;
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: .15em;
+            color: var(--ink);
+            background: linear-gradient(180deg, var(--gold-bright), var(--gold) 50%, #8b6618);
+            border: 2px solid var(--gold-bright);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            transition: all .2s;
+            box-shadow: 0 4px 0 var(--red-deep), 0 6px 16px rgba(0, 0, 0, .5);
+        }
+
+        .toss-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 var(--red-deep), 0 10px 20px rgba(232, 184, 74, .4);
+        }
+
+        .toss-btn:active:not(:disabled) {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 var(--red-deep), 0 3px 8px rgba(0, 0, 0, .5);
+        }
+
+        .toss-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+            background: linear-gradient(180deg, #666, #444);
+            border-color: #666;
+            color: #999;
+        }
+
+        .toss-btn::before {
+            content: "◆ ";
+            color: var(--red-deep)
+        }
+
+        .toss-btn::after {
+            content: " ◆";
+            color: var(--red-deep)
+        }
+
+        .result-display {
+            text-align: center;
+            padding: 12px;
+            background: rgba(0, 0, 0, .35);
+            border: 1px solid rgba(201, 150, 43, .25);
+            border-radius: 2px;
+            min-height: 60px;
+        }
+
+        .roll-history {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 8px;
+            min-height: 18px;
+        }
+
+        .roll-history .pip {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(240, 227, 194, .15);
+            border: 1px solid rgba(201, 150, 43, .3);
+            transition: all .3s;
+        }
+
+        .roll-history .pip.horse {
+            background: radial-gradient(circle, var(--gold-bright), var(--gold));
+            border-color: var(--gold-bright);
+            box-shadow: 0 0 6px var(--gold-bright);
+        }
+
+        .result-display .status {
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: 13px;
+            color: var(--parchment-dark);
+            letter-spacing: .05em;
+        }
+
+        .result-display .horses {
+            font-family: 'Cinzel', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gold-bright);
+            margin-top: 4px;
+            letter-spacing: .1em;
+        }
+
+        .result-display .horses.big {
+            font-size: 28px;
+            animation: pulse-gold .6s;
+        }
+
+        @keyframes pulse-gold {
+            0% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.3);
+                text-shadow: 0 0 30px var(--gold-bright)
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        /* Доод дүрмийн хэсэг */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 0 10px;
+            font-size: 13px;
+            color: var(--parchment-dark);
+        }
+
+        footer .rules {
+            display: flex;
+            gap: 24px;
+        }
+
+        footer .rule {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        footer .rule b {
+            color: var(--gold-bright);
+            font-weight: 600
+        }
+
+        footer .reset,
+        footer .sound-toggle {
+            background: transparent;
+            border: 1px solid rgba(201, 150, 43, .4);
+            color: var(--parchment);
+            padding: 8px 16px;
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: 12px;
+            letter-spacing: .1em;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        footer .reset:hover,
+        footer .sound-toggle:hover {
+            background: rgba(201, 150, 43, .15);
+            border-color: var(--gold-bright);
+            color: var(--gold-bright);
+        }
+
+        footer .sound-toggle {
+            padding: 8px 12px;
+            font-size: 16px;
+            min-width: 42px;
+        }
+
+        footer .sound-toggle.muted {
+            opacity: .5;
+            color: var(--parchment-dark);
+        }
+
+        footer .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Ялалтын дэлгэц */
+        .victory {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, rgba(13, 10, 6, .8), rgba(13, 10, 6, .98));
+            backdrop-filter: blur(8px);
+        }
+
+        .victory.show {
+            display: flex;
+            animation: fadeIn .5s
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .victory-card {
+            background: linear-gradient(145deg, #f0e3c2, #d9c79e);
+            color: var(--ink);
+            padding: 50px 70px;
+            border: 4px double var(--red-deep);
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 80px rgba(232, 184, 74, .6);
+        }
+
+        .victory-card::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 1px solid var(--red-deep);
+            pointer-events: none;
+        }
+
+        .victory-card button {
+            position: relative;
+            z-index: 1;
+        }
+
+        .victory-card .banner {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            letter-spacing: .5em;
+            color: var(--red-deep);
+            margin-bottom: 20px;
+        }
+
+        .victory-card .champion {
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--red-deep);
+            line-height: 1;
+            margin-bottom: 14px;
+            text-shadow: 2px 2px 0 rgba(201, 150, 43, .3);
+        }
+
+        .victory-card .name-big {
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: 32px;
+            color: var(--ink);
+            margin-bottom: 28px;
+        }
+
+        .victory-card button {
+            padding: 14px 40px;
+            font-family: 'Noto Serif Mongolian', serif;
+            font-size: 16px;
+            letter-spacing: .2em;
+            background: var(--red-deep);
+            color: var(--parchment);
+            border: none;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .victory-card button:hover {
+            background: var(--red);
+            transform: translateY(-2px);
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 14px;
+            animation: fall 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0
+            }
+        }
+
+        @media (max-width:900px) {
+            .app {
+                padding: 30px 12px
+            }
+
+            .main {
+                grid-template-columns: 1fr;
+                grid-template-rows: minmax(260px, 40vh) 1fr
+            }
+
+            .play-panel {
+                padding: 14px
+            }
+
+            header {
+                flex-direction: column;
+                align-items: stretch
+            }
+
+            .players-bar {
+                justify-content: space-between
+            }
+
+            .player-card {
+                min-width: 0;
+                flex: 1
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 10px
+            }
+
+            footer .rules {
+                flex-wrap: wrap;
+                justify-content: center
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stars"></div>
+    <div class="pattern-border"></div>
+    <div class="pattern-border bottom"></div>
+
+    <div class="app">
+        <header>
+            <div class="title">
+                <div class="title-ornament"></div>
+                <div>
+                    <h1>ШАГАЙН МОРИН УРАЛДААН</h1>
+                    <span class="sub">MONGOL · SHAGAI · HORSE RACE</span>
+                </div>
+            </div>
+            <div class="players-bar">
+                <div class="player-card" id="p1-card">
+                    <div class="label">ТОГЛОГЧ · I</div>
+                    <div class="name">Хөх Морь</div>
+                    <div class="progress">Нүүсэн: <strong id="p1-pos">0</strong> / <span id="goal1">20</span></div>
+                </div>
+                <div class="player-card" id="p2-card">
+                    <div class="label">ТОГЛОГЧ · II</div>
+                    <div class="name">Улаан Морь</div>
+                    <div class="progress">Нүүсэн: <strong id="p2-pos">0</strong> / <span id="goal2">20</span></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main">
+            <div class="race-track">
+                <canvas id="track"></canvas>
+            </div>
+
+            <div class="play-panel">
+                <div class="panel-title" id="turn-title">◆ I-р тоглогчийн ээлж ◆</div>
+
+                <div class="toss-area" id="toss-area">
+                    <div class="shagai">
+                        <div class="face"></div>
+                    </div>
+                    <div class="shagai">
+                        <div class="face"></div>
+                    </div>
+                    <div class="shagai">
+                        <div class="face"></div>
+                    </div>
+                    <div class="shagai">
+                        <div class="face"></div>
+                    </div>
+                </div>
+
+                <div class="result-display" id="result">
+                    <div class="status">4 шагайг орхино уу</div>
+                    <div class="horses" id="horse-count">—</div>
+                    <div class="roll-history" id="roll-history">
+                        <div class="pip"></div>
+                        <div class="pip"></div>
+                        <div class="pip"></div>
+                        <div class="pip"></div>
+                    </div>
+                </div>
+
+                <button class="toss-btn" id="toss">ШАГАЙ ОРХИХ <span style="font-size:11px;opacity:.7">[Зай]</span></button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="rules">
+                <div class="rule"><span style="font-size:20px">🐴</span> Морь буухад <b>урагшлана</b></div>
+                <div class="rule"><span style="font-size:20px">🐑</span> Хонь, ямаа, тэмээ — <b>хөдөлгөөнгүй</b></div>
+                <div class="rule"><span style="font-size:20px">🏁</span> Барианд түрүүлсэн нь <b>ялагч</b></div>
+            </div>
+            <div class="controls">
+                <button class="sound-toggle" id="sound-toggle" title="Дуу">🔊</button>
+                <button class="reset" id="reset">◈ Тоглоомыг шинэчлэх ◈</button>
+            </div>
+        </footer>
+    </div>
+
+    <div class="victory" id="victory">
+        <div class="victory-card">
+            <div class="banner">◆ ◆ ◆ ТҮРҮҮ АВЛАА ◆ ◆ ◆</div>
+            <div class="champion">АЙРАГДСАН</div>
+            <div class="name-big" id="winner-name">Хөх Морь</div>
+            <button id="play-again">Дахин уралдах</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== Дууны эффектүүд (Web Audio API) ==========
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function getAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function tone(freq, dur, type, vol, attack) {
+            if (!soundEnabled) return;
+            const ctx = getAudio();
+            const t = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = type || 'sine';
+            osc.frequency.value = freq;
+            g.gain.setValueAtTime(0, t);
+            g.gain.linearRampToValueAtTime(vol, t + (attack || 0.005));
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            osc.connect(g).connect(ctx.destination);
+            osc.start(t);
+            osc.stop(t + dur + 0.05);
+        }
+
+        function noiseBurst(dur, vol, centerFreq, q) {
+            if (!soundEnabled) return;
+            const ctx = getAudio();
+            const t = ctx.currentTime;
+            const len = Math.max(1, Math.floor(ctx.sampleRate * dur));
+            const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+            const src = ctx.createBufferSource();
+            src.buffer = buffer;
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = centerFreq;
+            filter.Q.value = q || 5;
+            const g = ctx.createGain();
+            g.gain.setValueAtTime(vol, t);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            src.connect(filter).connect(g).connect(ctx.destination);
+            src.start(t);
+            src.stop(t + dur + 0.02);
+        }
+
+        function freqSweep(f1, f2, dur, vol, type) {
+            if (!soundEnabled) return;
+            const ctx = getAudio();
+            const t = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = type || 'sine';
+            osc.frequency.setValueAtTime(f1, t);
+            osc.frequency.exponentialRampToValueAtTime(f2, t + dur);
+            g.gain.setValueAtTime(vol, t);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            osc.connect(g).connect(ctx.destination);
+            osc.start(t);
+            osc.stop(t + dur + 0.05);
+        }
+
+        // Шагай шажигнах (clatter)
+        function sfxShake() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    noiseBurst(0.06, 0.18, 1800 + Math.random() * 1800, 6);
+                    tone(360 + Math.random() * 480, 0.04, 'triangle', 0.06);
+                }, i * 70);
+            }
+        }
+
+        // Шагай газарт унах (thud)
+        function sfxLand() {
+            tone(70, 0.25, 'sine', 0.35, 0.005);
+            noiseBurst(0.18, 0.22, 250, 1.5);
+            setTimeout(() => {
+                noiseBurst(0.08, 0.12, 800, 4);
+                tone(110, 0.1, 'sine', 0.15);
+            }, 50);
+        }
+
+        // Туурайн чимээ
+        function sfxHoof() {
+            tone(85, 0.08, 'sine', 0.28, 0.002);
+            noiseBurst(0.05, 0.08, 400, 3);
+        }
+
+        function sfxGallop(count) {
+            const beats = Math.min(8, Math.max(2, count * 2));
+            for (let i = 0; i < beats; i++) {
+                setTimeout(sfxHoof, i * 105);
+            }
+        }
+
+        // Морь буусан хонх
+        function sfxMorinChime() {
+            const notes = [392, 494, 587, 784]; // G мажор
+            notes.forEach((f, i) => {
+                setTimeout(() => tone(f, 0.55, 'sine', 0.13), i * 45);
+            });
+            setTimeout(() => noiseBurst(0.3, 0.04, 4000, 8), 60);
+        }
+
+        // Ээлж солих
+        function sfxTurnSwitch() {
+            freqSweep(220, 440, 0.22, 0.12, 'sine');
+        }
+
+        // Ялалтын дуу — Монгол хэлбэрийн фанфар
+        function sfxVictory() {
+            const seq = [
+                [262, 0, 0.3], [330, 130, 0.3], [392, 260, 0.3],
+                [523, 400, 0.5], [659, 550, 0.6], [784, 700, 0.9]
+            ];
+            seq.forEach(([f, t, d]) => {
+                setTimeout(() => tone(f, d, 'triangle', 0.22), t);
+                setTimeout(() => tone(f * 0.5, d, 'sine', 0.12), t);
+            });
+            setTimeout(() => {
+                tone(523, 1.2, 'triangle', 0.18);
+                tone(659, 1.2, 'triangle', 0.15);
+                tone(784, 1.2, 'triangle', 0.12);
+            }, 900);
+        }
+
+        // Шинэчлэх
+        function sfxReset() {
+            freqSweep(440, 180, 0.3, 0.12, 'sine');
+            noiseBurst(0.18, 0.06, 1500, 4);
+        }
+
+        // Товчны дуу
+        function sfxClick() {
+            tone(900, 0.04, 'square', 0.08);
+        }
+
+        // ========== Тоглоомын логик ==========
+        const TRACK_LENGTH = 20; // хэдэн алхмаар барианд хүрэх
+        const FACES = [
+            { name: 'хонь', isHorse: false, weight: 3 },
+            { name: 'ямаа', isHorse: false, weight: 3 },
+            { name: 'морь', isHorse: true, weight: 2 },
+            { name: 'тэмээ', isHorse: false, weight: 2 },
+        ];
+
+        // ========== Бодитой шагайн SVG ==========
+        let svgIdCounter = 0;
+        function shagaiSvg(name) {
+            const isHorse = name === 'морь';
+            const id = ++svgIdCounter;
+            const c = isHorse
+                ? { l: '#fff5b8', m: '#e8b84a', d: '#8b6618', s: '#4a2d10', mark: '#3a1a05' }
+                : { l: '#fff8e0', m: '#e8d4a0', d: '#a08560', s: '#5a3e1f', mark: '#3a2510' };
+
+            const animals = {
+                'хонь': `
+                    <g transform="translate(60 56)" fill="${c.mark}">
+                        <!-- Ноосон бие — олон дугуйрсан хэсэг -->
+                        <ellipse cx="0" cy="2" rx="22" ry="13"/>
+                        <circle cx="-15" cy="-3" r="9"/>
+                        <circle cx="-6" cy="-9" r="10"/>
+                        <circle cx="5" cy="-9" r="10"/>
+                        <circle cx="15" cy="-3" r="9"/>
+                        <circle cx="-10" cy="8" r="7"/>
+                        <circle cx="0" cy="9" r="7"/>
+                        <circle cx="10" cy="8" r="7"/>
+                        <!-- Толгой -->
+                        <ellipse cx="-23" cy="0" rx="6.5" ry="5"/>
+                        <!-- Хоншоор -->
+                        <ellipse cx="-28" cy="2" rx="3" ry="2"/>
+                        <!-- Чих (ёрвгор) -->
+                        <ellipse cx="-25" cy="-4" rx="2" ry="3.5" transform="rotate(-25 -25 -4)"/>
+                        <!-- Жижиг эвэр -->
+                        <path d="M-22,-3 Q-25,-7 -22,-9" stroke="${c.mark}" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        <!-- Нүд -->
+                        <circle cx="-25" cy="-1" r="0.9" fill="#fff"/>
+                        <!-- Хөл -->
+                        <rect x="-13" y="11" width="3" height="9" rx="1.2"/>
+                        <rect x="-5" y="13" width="3" height="9" rx="1.2"/>
+                        <rect x="2" y="13" width="3" height="9" rx="1.2"/>
+                        <rect x="10" y="11" width="3" height="9" rx="1.2"/>
+                        <!-- Туурай -->
+                        <ellipse cx="-11.5" cy="20.5" rx="2.5" ry="1.2" fill="#1a0f06"/>
+                        <ellipse cx="-3.5" cy="22.5" rx="2.5" ry="1.2" fill="#1a0f06"/>
+                        <ellipse cx="3.5" cy="22.5" rx="2.5" ry="1.2" fill="#1a0f06"/>
+                        <ellipse cx="11.5" cy="20.5" rx="2.5" ry="1.2" fill="#1a0f06"/>
+                        <!-- Богино сүүл -->
+                        <circle cx="22" cy="-1" r="3.5"/>
+                    </g>`,
+                'ямаа': `
+                    <g transform="translate(60 56)" fill="${c.mark}">
+                        <!-- Бие (нарийн) -->
+                        <ellipse cx="0" cy="3" rx="17" ry="7"/>
+                        <!-- Цээж -->
+                        <ellipse cx="-15" cy="3" rx="4.5" ry="6.5"/>
+                        <!-- Хүзүү (өргөгдсөн) -->
+                        <path d="M-15,-2 Q-21,-7 -23,-12 L-19,-15 Q-17,-9 -11,-2 Z"/>
+                        <!-- Толгой -->
+                        <ellipse cx="-25" cy="-13" rx="5.5" ry="3.5"/>
+                        <!-- Хоншоор -->
+                        <ellipse cx="-30" cy="-12" rx="3" ry="2"/>
+                        <!-- Хүчтэй муруйсан эвэр (ямааны үндсэн шинж) -->
+                        <path d="M-23,-16 Q-22,-22 -16,-23 Q-13,-21 -14,-19"
+                              stroke="${c.mark}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        <path d="M-26,-15 Q-25,-22 -19,-24 Q-16,-22 -17,-19"
+                              stroke="${c.mark}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        <!-- Сахал (ямааны үндсэн шинж) -->
+                        <path d="M-29,-10 Q-31,-5 -27,-5 Q-28,-8 -26,-11 Z"/>
+                        <!-- Чих -->
+                        <ellipse cx="-22" cy="-15" rx="1.8" ry="3" transform="rotate(25 -22 -15)"/>
+                        <!-- Нүд -->
+                        <circle cx="-26" cy="-13" r="0.8" fill="#fff"/>
+                        <!-- Нарийн хөл -->
+                        <rect x="-11" y="9" width="2.4" height="13" rx="1"/>
+                        <rect x="-4" y="9" width="2.4" height="13" rx="1"/>
+                        <rect x="3" y="9" width="2.4" height="13" rx="1"/>
+                        <rect x="10" y="9" width="2.4" height="13" rx="1"/>
+                        <!-- Туурай -->
+                        <ellipse cx="-9.8" cy="22" rx="2" ry="1" fill="#1a0f06"/>
+                        <ellipse cx="-2.8" cy="22" rx="2" ry="1" fill="#1a0f06"/>
+                        <ellipse cx="4.2" cy="22" rx="2" ry="1" fill="#1a0f06"/>
+                        <ellipse cx="11.2" cy="22" rx="2" ry="1" fill="#1a0f06"/>
+                        <!-- Босоо сүүл -->
+                        <path d="M16,0 L21,-7 L21,-3 L17,2 Z"/>
+                    </g>`,
+                'морь': `
+                    <g transform="translate(60 56)" fill="${c.mark}">
+                        <!-- Бие (урт, гоёмсог) -->
+                        <ellipse cx="-2" cy="3" rx="20" ry="7"/>
+                        <!-- Цээж -->
+                        <ellipse cx="13" cy="3" rx="5.5" ry="7"/>
+                        <!-- Уртавтар нуруу -->
+                        <ellipse cx="-2" cy="-1" rx="16" ry="3"/>
+                        <!-- Нумарсан хүзүү -->
+                        <path d="M12,-3 Q18,-13 25,-17 L29,-13 Q23,-7 16,3 Z"/>
+                        <!-- Толгой (морины онцлог хэлбэр) -->
+                        <path d="M24,-19 Q31,-19 33,-15 L34,-10 Q30,-8 26,-12 Q22,-15 24,-19 Z"/>
+                        <!-- Хоншоор -->
+                        <ellipse cx="33" cy="-11" rx="2.5" ry="1.8"/>
+                        <!-- Хурц чих -->
+                        <path d="M23,-19 L24,-23 L26,-20 Z"/>
+                        <path d="M27,-19 L28,-23 L30,-19 Z"/>
+                        <!-- Урсгаг дэл (морины үндсэн шинж) -->
+                        <path d="M9,-5 Q14,-16 25,-17 Q22,-13 18,-9 Q14,-6 11,-2 Z"/>
+                        <!-- Дэлний ширхгүүд -->
+                        <path d="M12,-7 Q16,-14 22,-14" stroke="${c.mark}" stroke-width="0.9" fill="none"/>
+                        <path d="M14,-5 Q18,-12 23,-12" stroke="${c.mark}" stroke-width="0.9" fill="none"/>
+                        <path d="M16,-3 Q20,-10 25,-11" stroke="${c.mark}" stroke-width="0.9" fill="none"/>
+                        <!-- Нүд -->
+                        <circle cx="29" cy="-14" r="1" fill="#fff"/>
+                        <!-- Хамар -->
+                        <circle cx="33" cy="-12" r="0.6" fill="#1a0f06"/>
+                        <!-- Урсгаг сүүл (морины үндсэн шинж) -->
+                        <path d="M-21,1 Q-29,4 -29,12 Q-25,9 -22,6 Q-20,4 -19,3 Z"/>
+                        <path d="M-23,3 Q-29,7 -28,11" stroke="${c.mark}" stroke-width="0.9" fill="none"/>
+                        <path d="M-22,5 Q-27,9 -26,12" stroke="${c.mark}" stroke-width="0.7" fill="none"/>
+                        <!-- Урт хөл (4) -->
+                        <rect x="-14" y="9" width="2.6" height="13" rx="1"/>
+                        <rect x="-6" y="9" width="2.6" height="13" rx="1"/>
+                        <rect x="2" y="9" width="2.6" height="13" rx="1"/>
+                        <rect x="10" y="9" width="2.6" height="13" rx="1"/>
+                        <!-- Туурай -->
+                        <ellipse cx="-12.7" cy="22.5" rx="2.2" ry="1.1" fill="#1a0f06"/>
+                        <ellipse cx="-4.7" cy="22.5" rx="2.2" ry="1.1" fill="#1a0f06"/>
+                        <ellipse cx="3.3" cy="22.5" rx="2.2" ry="1.1" fill="#1a0f06"/>
+                        <ellipse cx="11.3" cy="22.5" rx="2.2" ry="1.1" fill="#1a0f06"/>
+                    </g>`,
+                'тэмээ': `
+                    <g transform="translate(60 58)" fill="${c.mark}">
+                        <!-- Бие хоёр БҮЛ-тэй (тэмээний үндсэн шинж) -->
+                        <path d="M-19,5
+                                 Q-19,0 -17,-1
+                                 L-16,-2
+                                 Q-14,-13 -7,-14
+                                 Q-1,-13 0,-7
+                                 Q0,-3 2,-3
+                                 Q4,-3 4,-7
+                                 Q5,-14 11,-14
+                                 Q18,-13 19,-2
+                                 L19,5
+                                 Z"/>
+                        <!-- Бүлгүүдийн ялгаа гэрэл -->
+                        <ellipse cx="-7" cy="-12" rx="3" ry="1" fill="rgba(255,255,255,0.15)"/>
+                        <ellipse cx="11" cy="-12" rx="3" ry="1" fill="rgba(255,255,255,0.15)"/>
+                        <!-- S хэлбэрийн урт хүзүү -->
+                        <path d="M-16,1
+                                 Q-23,-3 -23,-11
+                                 Q-23,-17 -17,-19
+                                 L-13,-17
+                                 Q-19,-15 -19,-10
+                                 Q-19,-5 -13,-1
+                                 Z"/>
+                        <!-- Жижиг толгой -->
+                        <path d="M-17,-20
+                                 Q-23,-21 -23,-17
+                                 Q-20,-16 -16,-17
+                                 Q-14,-19 -17,-20 Z"/>
+                        <!-- Уруул -->
+                        <ellipse cx="-22" cy="-16" rx="2" ry="1.5"/>
+                        <!-- Чих -->
+                        <path d="M-16,-20 L-14,-23 L-13,-20 Z"/>
+                        <!-- Нүд -->
+                        <circle cx="-19" cy="-18" r="0.8" fill="#fff"/>
+                        <!-- Урт нарийн хөл -->
+                        <rect x="-12" y="4" width="2.2" height="16" rx="0.8"/>
+                        <rect x="-5" y="4" width="2.2" height="16" rx="0.8"/>
+                        <rect x="3" y="4" width="2.2" height="16" rx="0.8"/>
+                        <rect x="11" y="4" width="2.2" height="16" rx="0.8"/>
+                        <!-- Өвдөгний өргөдөл -->
+                        <circle cx="-10.9" cy="12" r="1.4"/>
+                        <circle cx="-3.9" cy="12" r="1.4"/>
+                        <circle cx="4.1" cy="12" r="1.4"/>
+                        <circle cx="12.1" cy="12" r="1.4"/>
+                        <!-- Тавхай -->
+                        <ellipse cx="-10.9" cy="20" rx="2.5" ry="1.2" fill="#1a0f06"/>
+                        <ellipse cx="-3.9" cy="20" rx="2.5" ry="1.2" fill="#1a0f06"/>
+                        <ellipse cx="4.1" cy="20" rx="2.5" ry="1.2" fill="#1a0f06"/>
+                        <ellipse cx="12.1" cy="20" rx="2.5" ry="1.2" fill="#1a0f06"/>
+                        <!-- Жижиг сүүл -->
+                        <path d="M19,3 Q23,4 22,9 Q20,5 19,5 Z"/>
+                    </g>`
+            };
+
+            return `<svg viewBox="0 0 120 110" preserveAspectRatio="xMidYMid meet" class="shagai-svg">
+                <defs>
+                    <radialGradient id="bg${id}" cx="38%" cy="30%">
+                        <stop offset="0%" stop-color="${c.l}"/>
+                        <stop offset="55%" stop-color="${c.m}"/>
+                        <stop offset="100%" stop-color="${c.d}"/>
+                    </radialGradient>
+                </defs>
+                <ellipse cx="60" cy="100" rx="40" ry="3.5" fill="rgba(0,0,0,0.45)"/>
+                <path d="M22,32 C22,16 38,8 52,12 C62,7 76,8 84,14 C98,14 110,28 105,42 C112,55 108,72 94,76 C86,86 70,88 58,82 C46,87 30,84 24,76 C12,67 14,48 22,40 Z"
+                      fill="url(#bg${id})" stroke="${c.s}" stroke-width="0.8"/>
+                <ellipse cx="42" cy="26" rx="22" ry="11" fill="rgba(255,255,255,${isHorse ? '0.5' : '0.4'})" transform="rotate(-12 42 26)"/>
+                <path d="M30,62 Q45,60 55,64" stroke="${c.s}" stroke-width="0.5" fill="none" opacity="0.45"/>
+                <path d="M65,70 Q78,68 88,64" stroke="${c.s}" stroke-width="0.5" fill="none" opacity="0.4"/>
+                <path d="M28,42 Q35,40 42,44" stroke="${c.s}" stroke-width="0.4" fill="none" opacity="0.3"/>
+                <path d="M70,38 Q80,36 90,40" stroke="${c.s}" stroke-width="0.4" fill="none" opacity="0.3"/>
+                ${animals[name]}
+            </svg>`;
+        }
+
+        function setShagaiFace(el, face) {
+            el.querySelector('.face').innerHTML = shagaiSvg(face.name) + `<div class="bone-label">${face.name}</div>`;
+            if (face.isHorse) el.classList.add('morin');
+            else el.classList.remove('morin');
+        }
+        const state = {
+            turn: 0,           // 0 = Тоглогч 1, 1 = Тоглогч 2
+            positions: [0, 0],
+            rolling: false,
+            gameOver: false,
+        };
+
+        const el = {
+            tossBtn: document.getElementById('toss'),
+            resetBtn: document.getElementById('reset'),
+            playAgain: document.getElementById('play-again'),
+            tossArea: document.getElementById('toss-area'),
+            result: document.getElementById('result'),
+            horseCount: document.getElementById('horse-count'),
+            status: document.querySelector('#result .status'),
+            turnTitle: document.getElementById('turn-title'),
+            p1Card: document.getElementById('p1-card'),
+            p2Card: document.getElementById('p2-card'),
+            p1Pos: document.getElementById('p1-pos'),
+            p2Pos: document.getElementById('p2-pos'),
+            victory: document.getElementById('victory'),
+            winnerName: document.getElementById('winner-name'),
+            canvas: document.getElementById('track'),
+        };
+
+        document.getElementById('goal1').textContent = TRACK_LENGTH;
+        document.getElementById('goal2').textContent = TRACK_LENGTH;
+
+        function rollOne() {
+            const total = FACES.reduce((s, f) => s + f.weight, 0);
+            let r = Math.random() * total;
+            for (const f of FACES) {
+                if (r < f.weight) return f;
+                r -= f.weight;
+            }
+            return FACES[0];
+        }
+
+        function updateTurnUI() {
+            if (state.turn === 0) {
+                el.p1Card.classList.add('active');
+                el.p2Card.classList.remove('active');
+                el.turnTitle.innerHTML = '◆ I-р тоглогчийн ээлж ◆';
+                el.turnTitle.style.color = 'var(--sky)';
+            } else {
+                el.p2Card.classList.add('active');
+                el.p1Card.classList.remove('active');
+                el.turnTitle.innerHTML = '◆ II-р тоглогчийн ээлж ◆';
+                el.turnTitle.style.color = '#e89a7a';
+            }
+        }
+
+        function updatePositions() {
+            el.p1Pos.textContent = state.positions[0];
+            el.p2Pos.textContent = state.positions[1];
+            drawTrack();
+        }
+
+        function updateRollHistory(results) {
+            const pips = document.querySelectorAll('#roll-history .pip');
+            pips.forEach((p, i) => {
+                p.classList.toggle('horse', results[i] && results[i].isHorse);
+            });
+        }
+
+        function clearRollHistory() {
+            document.querySelectorAll('#roll-history .pip').forEach(p => p.classList.remove('horse'));
+        }
+
+        async function tossShagai() {
+            if (state.rolling || state.gameOver) return;
+            state.rolling = true;
+            el.tossBtn.disabled = true;
+            el.status.textContent = 'Шагай орхиж байна...';
+            el.horseCount.textContent = '—';
+            el.horseCount.classList.remove('big');
+            clearRollHistory();
+
+            const shagaiEls = el.tossArea.querySelectorAll('.shagai');
+            const results = [];
+
+            shagaiEls.forEach(s => {
+                s.classList.remove('rolling', 'morin');
+            });
+
+            await new Promise(r => setTimeout(r, 50));
+
+            sfxShake();
+
+            shagaiEls.forEach((s, i) => {
+                const face = rollOne();
+                results.push(face);
+                setTimeout(() => {
+                    s.classList.add('rolling');
+                    setShagaiFace(s, face);
+                }, i * 130);
+            });
+
+            await new Promise(r => setTimeout(r, 1300));
+            sfxLand();
+            await new Promise(r => setTimeout(r, 200));
+            updateRollHistory(results);
+
+            const horses = results.filter(f => f.isHorse).length;
+
+            if (horses === 0) {
+                el.status.textContent = 'Морь буугаагүй — зогсоно';
+                el.horseCount.textContent = '0 морь';
+            } else {
+                el.status.textContent = `${horses} морь буулаа — урагшлана!`;
+                el.horseCount.textContent = `+${horses} ${horses === 4 ? '★ ДӨРВӨН МОРЬ ★' : 'морь'}`;
+                el.horseCount.classList.add('big');
+
+                sfxMorinChime();
+                setTimeout(() => sfxGallop(horses), 250);
+
+                const t = state.turn;
+                state.positions[t] = Math.min(TRACK_LENGTH, state.positions[t] + horses);
+            }
+
+            updatePositions();
+
+            await new Promise(r => setTimeout(r, 900));
+
+            if (state.positions[state.turn] >= TRACK_LENGTH) {
+                declareWinner(state.turn);
+                return;
+            }
+
+            state.turn = 1 - state.turn;
+            sfxTurnSwitch();
+            updateTurnUI();
+            state.rolling = false;
+            el.tossBtn.disabled = false;
+        }
+
+        function declareWinner(idx) {
+            state.gameOver = true;
+            const names = ['Хөх Морь', 'Улаан Морь'];
+            el.winnerName.textContent = names[idx];
+            el.winnerName.style.color = idx === 0 ? 'var(--blue)' : 'var(--red-deep)';
+            el.victory.classList.add('show');
+            spawnConfetti();
+            sfxVictory();
+        }
+
+        function spawnConfetti() {
+            const colors = ['#e8b84a', '#9e2a1f', '#1a3a5c', '#c9962b', '#f0e3c2'];
+            for (let i = 0; i < 60; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + '%';
+                c.style.top = -20 + 'px';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.animationDelay = (Math.random() * 2) + 's';
+                c.style.animationDuration = (2 + Math.random() * 2) + 's';
+                c.style.transform = `rotate(${Math.random() * 360}deg)`;
+                el.victory.appendChild(c);
+                setTimeout(() => c.remove(), 5000);
+            }
+        }
+
+        function resetGame() {
+            sfxReset();
+            state.turn = 0;
+            state.positions = [0, 0];
+            state.rolling = false;
+            state.gameOver = false;
+            el.victory.classList.remove('show');
+            el.tossBtn.disabled = false;
+            el.status.textContent = '4 шагайг орхино уу';
+            el.horseCount.textContent = '—';
+            el.horseCount.classList.remove('big');
+            clearRollHistory();
+
+            const initial = [
+                { name: 'хонь', isHorse: false },
+                { name: 'ямаа', isHorse: false },
+                { name: 'тэмээ', isHorse: false },
+                { name: 'хонь', isHorse: false },
+            ];
+            el.tossArea.querySelectorAll('.shagai').forEach((s, i) => {
+                s.classList.remove('rolling', 'morin');
+                setShagaiFace(s, initial[i]);
+            });
+
+            updateTurnUI();
+            updatePositions();
+        }
+
+        el.tossBtn.addEventListener('click', tossShagai);
+        el.resetBtn.addEventListener('click', resetGame);
+        el.playAgain.addEventListener('click', resetGame);
+
+        // Дуу унтраах/асаах товч
+        const soundBtn = document.getElementById('sound-toggle');
+        soundBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+            soundBtn.classList.toggle('muted', !soundEnabled);
+            if (soundEnabled) sfxClick();
+        });
+
+        // Зайны товч дарахад шагай орхих
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !state.rolling && !state.gameOver) {
+                e.preventDefault();
+                tossShagai();
+            }
+        });
+
+        // ========== Canvas дээр уралдааны зам зурах ==========
+        const ctx = el.canvas.getContext('2d');
+        let W = 0, H = 0, dpr = 1;
+        let horseAnim = [{ x: 0, y: 0, bounce: 0, target: 0 }, { x: 0, y: 0, bounce: 0, target: 0 }];
+
+        // Тоосны хэсгүүд
+        const dustParticles = [];
+        function emitDust(x, y, speed) {
+            if (dustParticles.length > 80) return;
+            for (let i = 0; i < 2; i++) {
+                dustParticles.push({
+                    x: x + (Math.random() - 0.5) * 6,
+                    y: y + (Math.random() - 0.5) * 3,
+                    vx: -speed * 0.4 - Math.random() * 0.6,
+                    vy: -Math.random() * 1.4 - 0.2,
+                    life: 1,
+                    size: Math.random() * 3 + 2.5
+                });
+            }
+        }
+        function updateDust() {
+            for (let i = dustParticles.length - 1; i >= 0; i--) {
+                const d = dustParticles[i];
+                d.x += d.vx;
+                d.y += d.vy;
+                d.vy += 0.04;
+                d.life -= 0.018;
+                if (d.life <= 0) dustParticles.splice(i, 1);
+            }
+        }
+        function drawDust() {
+            for (const d of dustParticles) {
+                ctx.fillStyle = `rgba(190, 150, 90, ${d.life * 0.55})`;
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.size * d.life, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function resizeCanvas() {
+            dpr = window.devicePixelRatio || 1;
+            const rect = el.canvas.getBoundingClientRect();
+            W = rect.width;
+            H = rect.height;
+            el.canvas.width = W * dpr;
+            el.canvas.height = H * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            drawTrack();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawTrack() {
+            if (W === 0) return;
+            ctx.clearRect(0, 0, W, H);
+
+            // ========== Тэнгэр ==========
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.5);
+            skyGrad.addColorStop(0, '#1a2844');
+            skyGrad.addColorStop(0.6, '#3d4a66');
+            skyGrad.addColorStop(1, '#7a5a45');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, W, H * 0.5);
+
+            // Од
+            for (let i = 0; i < 40; i++) {
+                const x = (i * 73) % W;
+                const y = ((i * 41) % Math.floor(H * 0.35));
+                ctx.fillStyle = `rgba(255,245,200,${0.3 + Math.random() * 0.5})`;
+                ctx.fillRect(x, y, 1.5, 1.5);
+            }
+
+            // ========== Уул ==========
+            const mountainGrad = ctx.createLinearGradient(0, H * 0.25, 0, H * 0.55);
+            mountainGrad.addColorStop(0, '#2a3a4a');
+            mountainGrad.addColorStop(1, '#1a2028');
+            ctx.fillStyle = mountainGrad;
+            ctx.beginPath();
+            ctx.moveTo(0, H * 0.5);
+            ctx.lineTo(0, H * 0.42);
+            for (let i = 0; i <= 8; i++) {
+                const x = (i / 8) * W;
+                const y = H * 0.42 - Math.sin(i * 1.3) * H * 0.08 - (i % 2 ? H * 0.04 : 0);
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(W, H * 0.5);
+            ctx.closePath();
+            ctx.fill();
+
+            // Ойрх уул
+            ctx.fillStyle = '#1a1410';
+            ctx.beginPath();
+            ctx.moveTo(0, H * 0.5);
+            ctx.lineTo(0, H * 0.48);
+            for (let i = 0; i <= 10; i++) {
+                const x = (i / 10) * W;
+                const y = H * 0.48 - Math.abs(Math.sin(i * 0.9)) * H * 0.05;
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(W, H * 0.5);
+            ctx.closePath();
+            ctx.fill();
+
+            // ========== Тал нутаг ==========
+            const grassGrad = ctx.createLinearGradient(0, H * 0.5, 0, H);
+            grassGrad.addColorStop(0, '#5a6a2a');
+            grassGrad.addColorStop(0.5, '#4a5820');
+            grassGrad.addColorStop(1, '#3a4418');
+            ctx.fillStyle = grassGrad;
+            ctx.fillRect(0, H * 0.5, W, H * 0.5);
+
+            // Өвсний өнгө variation
+            for (let i = 0; i < 80; i++) {
+                const x = Math.random() * W;
+                const y = H * 0.5 + Math.random() * H * 0.5;
+                const opacity = 0.08 + Math.random() * 0.15;
+                ctx.fillStyle = `rgba(130,150,60,${opacity})`;
+                ctx.fillRect(x, y, Math.random() * 30 + 5, 1);
+            }
+
+            // ========== Уралдааны зам ==========
+            const trackTop = H * 0.55;
+            const trackBottom = H * 0.92;
+            const laneHeight = (trackBottom - trackTop) / 2;
+            const startX = W * 0.06;
+            const finishX = W * 0.94;
+            const usableWidth = finishX - startX;
+
+            // Зам дэвсгэр
+            ctx.fillStyle = 'rgba(155,116,58,0.25)';
+            ctx.fillRect(startX - 10, trackTop - 5, usableWidth + 20, trackBottom - trackTop + 10);
+
+            // Хоёр эгнээг ялгах
+            for (let lane = 0; lane < 2; lane++) {
+                const y = trackTop + lane * laneHeight;
+                const dirtGrad = ctx.createLinearGradient(0, y, 0, y + laneHeight);
+                dirtGrad.addColorStop(0, lane === 0 ? 'rgba(180,140,80,0.4)' : 'rgba(160,100,70,0.4)');
+                dirtGrad.addColorStop(1, 'rgba(100,70,40,0.4)');
+                ctx.fillStyle = dirtGrad;
+                ctx.fillRect(startX, y, usableWidth, laneHeight);
+            }
+
+            // Дунд шугам
+            ctx.strokeStyle = 'rgba(201,150,43,0.4)';
+            ctx.setLineDash([8, 8]);
+            ctx.beginPath();
+            ctx.moveTo(startX, trackTop + laneHeight);
+            ctx.lineTo(finishX, trackTop + laneHeight);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Алхмын тэмдэг
+            for (let i = 0; i <= TRACK_LENGTH; i++) {
+                const x = startX + (i / TRACK_LENGTH) * usableWidth;
+                ctx.strokeStyle = 'rgba(240,227,194,0.15)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, trackTop - 5);
+                ctx.lineTo(x, trackBottom + 5);
+                ctx.stroke();
+
+                // 5-ын үржвэр дээр тоо бичих
+                if (i > 0 && i % 5 === 0 && i < TRACK_LENGTH) {
+                    ctx.fillStyle = 'rgba(240,227,194,0.4)';
+                    ctx.font = "bold 10px Cinzel, serif";
+                    ctx.textAlign = 'center';
+                    ctx.fillText(i, x, trackTop - 10);
+                }
+            }
+
+            // Гараа — улаан туг
+            drawFlag(startX, trackTop - 18, trackBottom - trackTop + 36, '#9e2a1f', 'ГАРАА');
+            // Бариа — алтан туг
+            drawFlag(finishX, trackTop - 18, trackBottom - trackTop + 36, '#c9962b', 'БАРИА');
+
+            // ========== Морьд ==========
+            const horseY1 = trackTop + laneHeight * 0.5;
+            const horseY2 = trackTop + laneHeight * 1.5;
+
+            // Зорилтот байр руу smooth нүүх
+            for (let i = 0; i < 2; i++) {
+                const targetX = startX + (state.positions[i] / TRACK_LENGTH) * usableWidth;
+                horseAnim[i].target = targetX;
+                const delta = targetX - horseAnim[i].x;
+                horseAnim[i].x += delta * 0.12;
+                if (Math.abs(delta) > 1.5 && Math.random() < 0.6) {
+                    emitDust(horseAnim[i].x - 18, (i === 0 ? horseY1 : horseY2) + 14, delta);
+                }
+            }
+
+            // Тоос - моринуудаас өмнө зурах (доор үлдэхээр)
+            updateDust();
+            drawDust();
+
+            drawHorse(horseAnim[0].x, horseY1, '#1a3a5c', '#4a6a8c', 'I', 0);
+            drawHorse(horseAnim[1].x, horseY2, '#9e2a1f', '#c95a4c', 'II', 1);
+        }
+
+        function shadeHex(hex, amt) {
+            const c = parseInt(hex.slice(1), 16);
+            const r = Math.max(0, Math.min(255, ((c >> 16) & 255) + amt));
+            const g = Math.max(0, Math.min(255, ((c >> 8) & 255) + amt));
+            const b = Math.max(0, Math.min(255, (c & 255) + amt));
+            return `rgb(${r},${g},${b})`;
+        }
+
+        function drawHorseLeg(x, y, swing, color, dark) {
+            // Дээд хөл
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x - 1.6, y);
+            ctx.lineTo(x + 1.6, y);
+            ctx.lineTo(x + 1.3 + swing * 0.3, y + 8);
+            ctx.lineTo(x - 1.3 + swing * 0.3, y + 8);
+            ctx.closePath();
+            ctx.fill();
+            // Өвдөг
+            ctx.fillStyle = dark;
+            ctx.beginPath();
+            ctx.arc(x + swing * 0.3, y + 8, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+            // Доод хөл
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x - 1.2 + swing * 0.3, y + 8);
+            ctx.lineTo(x + 1.2 + swing * 0.3, y + 8);
+            ctx.lineTo(x + 1 + swing, y + 16);
+            ctx.lineTo(x - 1 + swing, y + 16);
+            ctx.closePath();
+            ctx.fill();
+            // Туурай
+            ctx.fillStyle = '#0d0a06';
+            ctx.beginPath();
+            ctx.ellipse(x + swing, y + 16.5, 1.8, 1.2, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawFlag(x, y, height, color, label) {
+            // Шон
+            ctx.fillStyle = '#2a1a0f';
+            ctx.fillRect(x - 1, y, 2, height);
+
+            // Туг
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + 28, y + 4);
+            ctx.lineTo(x + 22, y + 12);
+            ctx.lineTo(x + 28, y + 20);
+            ctx.lineTo(x, y + 16);
+            ctx.closePath();
+            ctx.fill();
+
+            // Тугны хээ
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x + 4, y + 5);
+            ctx.lineTo(x + 20, y + 8);
+            ctx.stroke();
+
+            // Шошго
+            ctx.fillStyle = 'rgba(240,227,194,0.95)';
+            ctx.font = "bold 10px 'Noto Serif Mongolian', serif";
+            ctx.textAlign = 'center';
+            ctx.fillText(label, x, y + height + 14);
+        }
+
+        function drawHorse(cx, cy, bodyColor, maneColor, label, idx) {
+            ctx.save();
+
+            const t = performance.now() / 180;
+            const moving = horseAnim[idx] && Math.abs(horseAnim[idx].target - horseAnim[idx].x) > 0.4;
+            const speed = moving ? 4 : 1;
+            const bob = Math.sin(t * speed * 1.4) * (moving ? 1.6 : 0.4);
+            const ls = Math.sin(t * speed * 2) * (moving ? 5 : 1.2);
+
+            cy += bob;
+
+            const bodyDark = shadeHex(bodyColor, -38);
+            const bodyLight = shadeHex(bodyColor, 28);
+            const maneDark = shadeHex(maneColor, -30);
+
+            // Сүүдэр
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + 24, 30, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Хойд хөл
+            drawHorseLeg(cx - 16, cy + 6, -ls, bodyColor, bodyDark);
+            drawHorseLeg(cx - 11, cy + 6, ls, bodyColor, bodyDark);
+
+            // Бие (бодитой муруй хэлбэр)
+            const bg = ctx.createLinearGradient(cx, cy - 12, cx, cy + 10);
+            bg.addColorStop(0, bodyLight);
+            bg.addColorStop(0.55, bodyColor);
+            bg.addColorStop(1, bodyDark);
+            ctx.fillStyle = bg;
+            ctx.beginPath();
+            ctx.moveTo(cx - 22, cy + 2);
+            ctx.bezierCurveTo(cx - 24, cy - 8, cx - 16, cy - 14, cx - 4, cy - 14);
+            ctx.bezierCurveTo(cx + 12, cy - 14, cx + 22, cy - 12, cx + 24, cy - 4);
+            ctx.bezierCurveTo(cx + 24, cy + 4, cx + 18, cy + 8, cx + 6, cy + 8);
+            ctx.bezierCurveTo(cx - 8, cy + 9, cx - 20, cy + 8, cx - 22, cy + 2);
+            ctx.closePath();
+            ctx.fill();
+
+            // Хэвлийн сүүдэр
+            ctx.fillStyle = 'rgba(0,0,0,0.18)';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + 5, 18, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Урд хөл (биеэс илүү давхарлана)
+            drawHorseLeg(cx + 14, cy + 5, ls, bodyColor, bodyDark);
+            drawHorseLeg(cx + 19, cy + 5, -ls, bodyColor, bodyDark);
+
+            // Сүүл (хийсэх)
+            const tailWave = ls * 0.4;
+            ctx.fillStyle = maneColor;
+            ctx.beginPath();
+            ctx.moveTo(cx - 22, cy - 6);
+            ctx.bezierCurveTo(cx - 32, cy - 8 + tailWave, cx - 38, cy + 4 + tailWave, cx - 34, cy + 12);
+            ctx.bezierCurveTo(cx - 30, cy + 4, cx - 26, cy, cx - 20, cy);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = maneDark;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(cx - 24, cy - 4);
+            ctx.bezierCurveTo(cx - 32, cy + tailWave, cx - 36, cy + 6 + tailWave, cx - 32, cy + 10);
+            ctx.stroke();
+
+            // Хүзүү
+            ctx.fillStyle = bodyColor;
+            ctx.beginPath();
+            ctx.moveTo(cx + 14, cy - 12);
+            ctx.bezierCurveTo(cx + 22, cy - 22, cx + 28, cy - 26, cx + 32, cy - 22);
+            ctx.lineTo(cx + 34, cy - 16);
+            ctx.bezierCurveTo(cx + 28, cy - 12, cx + 22, cy - 6, cx + 18, cy - 4);
+            ctx.closePath();
+            ctx.fill();
+
+            // Хүзүүний сүүдэр
+            ctx.fillStyle = bodyDark;
+            ctx.beginPath();
+            ctx.moveTo(cx + 16, cy - 4);
+            ctx.bezierCurveTo(cx + 22, cy - 7, cx + 28, cy - 12, cx + 32, cy - 18);
+            ctx.lineTo(cx + 34, cy - 16);
+            ctx.bezierCurveTo(cx + 28, cy - 12, cx + 22, cy - 6, cx + 18, cy - 4);
+            ctx.closePath();
+            ctx.globalAlpha = 0.4;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            // Толгой
+            ctx.fillStyle = bodyColor;
+            ctx.beginPath();
+            ctx.moveTo(cx + 32, cy - 26);
+            ctx.bezierCurveTo(cx + 40, cy - 26, cx + 44, cy - 20, cx + 42, cy - 14);
+            ctx.bezierCurveTo(cx + 40, cy - 12, cx + 36, cy - 14, cx + 34, cy - 16);
+            ctx.bezierCurveTo(cx + 30, cy - 18, cx + 30, cy - 24, cx + 32, cy - 26);
+            ctx.closePath();
+            ctx.fill();
+
+            // Хошуу (цайвар)
+            ctx.fillStyle = shadeHex(bodyColor, 22);
+            ctx.beginPath();
+            ctx.ellipse(cx + 41, cy - 15, 3, 2, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Хамар
+            ctx.fillStyle = '#0d0a06';
+            ctx.beginPath();
+            ctx.arc(cx + 42, cy - 15, 0.7, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ам
+            ctx.strokeStyle = bodyDark;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(cx + 39, cy - 13.5);
+            ctx.lineTo(cx + 42, cy - 13);
+            ctx.stroke();
+
+            // Чих
+            ctx.fillStyle = bodyDark;
+            ctx.beginPath();
+            ctx.moveTo(cx + 32, cy - 26);
+            ctx.lineTo(cx + 32, cy - 32);
+            ctx.lineTo(cx + 35, cy - 26);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = shadeHex(maneColor, -10);
+            ctx.beginPath();
+            ctx.moveTo(cx + 33, cy - 27);
+            ctx.lineTo(cx + 33, cy - 30);
+            ctx.lineTo(cx + 34.5, cy - 26.5);
+            ctx.closePath();
+            ctx.fill();
+
+            // Нүд
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(cx + 36, cy - 21, 1.4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#0d0a06';
+            ctx.beginPath();
+            ctx.arc(cx + 36.3, cy - 20.7, 0.9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(cx + 36.5, cy - 21.2, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Дэл
+            ctx.fillStyle = maneColor;
+            ctx.beginPath();
+            ctx.moveTo(cx + 12, cy - 12);
+            ctx.bezierCurveTo(cx + 18, cy - 22, cx + 26, cy - 28, cx + 32, cy - 26);
+            ctx.bezierCurveTo(cx + 30, cy - 22, cx + 26, cy - 18, cx + 22, cy - 14);
+            ctx.bezierCurveTo(cx + 18, cy - 10, cx + 14, cy - 6, cx + 12, cy - 4);
+            ctx.closePath();
+            ctx.fill();
+
+            // Дэлний ширхэгүүд
+            ctx.strokeStyle = maneDark;
+            ctx.lineWidth = 0.7;
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                const sx = cx + 14 + i * 3;
+                ctx.moveTo(sx, cy - 8 - i * 0.5);
+                ctx.lineTo(sx + 1.5, cy - 16 - i * 1.2);
+                ctx.stroke();
+            }
+
+            // Толгой дээрх дэл
+            ctx.fillStyle = maneColor;
+            ctx.beginPath();
+            ctx.moveTo(cx + 32, cy - 26);
+            ctx.quadraticCurveTo(cx + 34, cy - 30, cx + 36, cy - 24);
+            ctx.lineTo(cx + 34, cy - 22);
+            ctx.closePath();
+            ctx.fill();
+
+            // Эмээл
+            ctx.fillStyle = '#3a2010';
+            ctx.beginPath();
+            ctx.ellipse(cx + 2, cy - 12, 10, 4, -0.05, 0, Math.PI * 2);
+            ctx.fill();
+            // Эмээлийн алтан хэц
+            ctx.fillStyle = '#c9962b';
+            ctx.fillRect(cx - 7, cy - 14, 14, 1.2);
+            // Эмээлийн өндөр хэсэг
+            ctx.fillStyle = '#5a3a18';
+            ctx.beginPath();
+            ctx.arc(cx + 8, cy - 14, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx - 7, cy - 14, 1.4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Морьчны дугаар
+            ctx.fillStyle = '#e8b84a';
+            ctx.font = "bold 9px Cinzel, serif";
+            ctx.textAlign = 'center';
+            ctx.fillText(label, cx + 1, cy - 8);
+
+            ctx.restore();
+        }
+
+        // Morь зөөхөд гүйлгэдэг анимаци
+        let animFrameId;
+        function animate() {
+            drawTrack();
+            animFrameId = requestAnimationFrame(animate);
+        }
+
+        function animateHorseMove(idx) {
+            // canvas animate loop нь allways running — positions шинэчлэхэд smooth нүүнэ
+        }
+
+        // Эхлүүлэх
+        setTimeout(() => {
+            resizeCanvas();
+            updateTurnUI();
+            animate();
+
+            // Шагайн анхны байдал
+            const initial = [
+                { name: 'хонь', isHorse: false },
+                { name: 'ямаа', isHorse: false },
+                { name: 'тэмээ', isHorse: false },
+                { name: 'хонь', isHorse: false },
+            ];
+            el.tossArea.querySelectorAll('.shagai').forEach((s, i) => {
+                setShagaiFace(s, initial[i]);
+            });
+        }, 50);
+    </script>
+</body>
+
+</html>

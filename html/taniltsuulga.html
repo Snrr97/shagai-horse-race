@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My first Page</title>
+    <style>
+        body{
+            margin:0;
+            font-family: Arial, sans-serif;
+            background-color:hsl(210, 26%, 7%);
+            display:flex;
+            flex-direction:column;
+            min-height:100vh;
+        }
+        /* Mobile first - default styles */
+        .header{
+            width:100%;
+            background-color:hsl(210, 26%, 7%)
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:center;
+            align-items:center;
+            padding:10px;
+            gap:8px;
+        }
+        .header a{
+            width:calc(50% - 8px);
+        }
+        .header button{
+            width:100%;
+            padding:8px 12px;
+            font-size:13px;
+            cursor:pointer;
+        }
+        .main{
+            display:flex;
+            flex-direction:column;
+            flex:1;
+        }
+        .sidebar{
+            width:100%;
+            background-color:hsl(207, 46%, 46%);
+            padding:20px;
+            box-sizing:border-box;
+            text-align:center;
+        }
+        .sidebar img{
+            width:50%;
+            height:auto;
+            margin-bottom:15px;
+        }
+        .content{
+            width:100%;
+            min-height:400px;
+            background-color:hsl(216, 19%, 11%);
+        }
+        .content iframe{
+            width:100%;
+            height:700px;
+            border:none;
+        }
+        .footer{
+            width:100%;
+            height:auto;
+            padding:15px;
+            background-color:hsl(210, 26%, 7%);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+        }
+
+        /* Tablet (769px+) */
+        @media (min-width: 769px) {
+            .header{
+                height:100px;
+                padding:0;
+                gap:10px;
+                flex-wrap:nowrap;
+            }
+            .header a{
+                width:auto;
+            }
+            .header button{
+                width:auto;
+                padding:8px 14px;
+                font-size:14px;
+            }
+            .main{
+                flex-direction:row;
+            }
+            .sidebar{
+                width:50%;
+                min-height:600px;
+                text-align:left;
+            }
+            .sidebar img{
+                width:100%;
+            }
+            .content{
+                width:50%;
+                min-height:600px;
+            }
+            .content iframe{
+                height:700px;
+            }
+            .footer{
+                height:150px;
+                padding:0;
+            }
+        }
+
+        /* Desktop (1025px+) */
+        @media (min-width: 1025px) {
+            .header{
+                gap:20px;
+            }
+            .header button{
+                padding:10px 20px;
+                font-size:16px;
+            }
+            .sidebar{
+                width:20%;
+            }
+            .content{
+                width:80%;
+            }
+            .content iframe{
+                height:700px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="nuur.html" target="web"><button>Нүүр хуудас</button></a>
+        <a href="zurag.html" target="web"><button>Зургууд</button></a>
+        <a href="bichleg.html" target="web"><button>Бичлэгүүд</button></a>
+        <a href="map.html" target="web"><button>Газрын зураг</button></a>
+    </div>
+    <div class="main">
+        <div class="sidebar">
+            <img src="att.qcGTTPbjBScBU0803hyZOIp2zjJYQfwFmFRv5YH1wms.JPG" alt="Profile Image">
+            <h3>Хувийн мэдээлэл</h3>
+            <p>Нэр: Б. Санчир</p>
+            <p>Төрсөн он: 2007</p>
+            <p>Хобби: Online тоглоом, зураг зурах</p>
+        </div>
+        <div class="content">
+            <iframe name="web" src="nuur.html"></iframe>
+        </div>
+    </div>
+    <div class="footer">    
+        <p style ="color: white;">Гэрийн хаяг: Улаанбаатар хот, Баянзүрх дүүрэг, 4-р хороо</p>
+    </div>
+</body>
+</html>

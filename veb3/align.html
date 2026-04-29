@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<title>Alignment Example</title>
+<style>
+/* text-align — блок элемент дотор текстийг хэвтээ тэгшлэнэ */
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+.text-left   { text-align: left; }
+
+/* align-items — Flexbox дотор элементүүдийг босоо тэнхлэгт тэгшлэнэ */
+.center {
+  align-items: center;
+  height: 200px;
+  border: 3px solid green; 
+  display: flex;  
+  flex-direction: column;  /* Босоо тэнхлэгт */
+  justify-content: center;
+}
+
+</style>
+</head>
+<body>
+<div>
+  <p class="text-center">Текст төвд</p>
+  <p class="text-right">Текст баруун</p>
+  <p class="text-left">Текст зүүн</p>
+</div>
+<div class="center">
+    <p>Элементүүдийг</p>
+    <p>Босоо тэнхлэгт</p>
+    <p>Тэгшлэх</p>
+</div>
+</div>
+
+</body>
+</html>
+<!-- text-align нь блок элемент дотор текстийг хэвтээ тэгшлэнэ. align-items нь Flexbox дотор элементүүдийг босоо тэнхлэгт тэгшлэнэ. -->

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Margin Example</title>
+<style>
+
+/* 1. Бүх талдаа 20px зай */
+.box1 {
+  margin: 10px;  
+  background: rgb(255, 242, 0);
+}
+/* 2. Дээр доор 100px, зүүн баруун 10px */
+.box2 {
+  margin: 100px 10px;  
+  background: rgb(25, 0, 255);
+}
+
+/* 3. Дээд, баруун, доод талд зай */
+.box3 {
+  margin: 100px 50px 100px;  
+  background: rgb(255, 0, 43);
+}
+.box4 {
+  margin: 10px 20px 30px 40px;   /* Дээр 10px, зүүн 20px, доор 30px, баруун 40px */
+  background: rgb(0, 255, 13); 
+ }
+.box5 {
+  margin-top: 10px;    /* Дээд талд 10px зай */
+  margin-bottom: 20px; /* Доор 20px зай */
+  margin-right: 30px;  /* Баруун талд 30px зай */
+  margin-left: 40px;   /* Зүүн талд 40px зай */
+  background-color: aqua;
+}
+div {
+  padding: 20px;
+  border: 2px solid black;
+}
+</style>
+</head>
+<body>
+
+<div class="box1"> margin 1 тоо байвал бүх тал</div>
+<div class="box2"> margin 2 тоо байвал дээр доор, зүүн баруун </div>
+<div class="box3"> margin 3 тоо байвал дээд, баруун зүүн, доор тал</div>
+<div class="box4"> margin 4 тоо байвал дээр, зүүн, доор, баруун</div>
+<div class="box5"> margin-top, margin-bottom, margin-right, margin-left</div>
+</body>
+</html>
+<!--
+/* margin 1 байвал бүх талаас 20px */
+/* margin 2 байвал дээр доор 10px, зүүн баруун 40px */
+/* margin 3 too baival deed , baruun zuun, dood tal */
+/* margin 4 байвал дээр 10px, зүүн 20px, доор 30px, баруун 40px */
+/* margin — элементийн ГАДНА тал дахь зайг тохируулна.
+   Хөрш элементүүдтэй зай авахад хэрэглэнэ.
+   Дөрвөн утга: дээш  баруун  доош  зүүн (цагийн зүүний дагуу) */

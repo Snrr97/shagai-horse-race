@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="mn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f3f6f9;
+            margin: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            background: #fff;
+            border-right: 1px solid #e9ecef;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .sidebar-section {
+            font-size: 11px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            padding: 15px 20px 8px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Bootstrap nav-pills-ийг sidebar загвараар override */
+        .sidebar .nav-pills .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            color: #4b5563;
+            font-size: 14px;
+            border-radius: 0;
+            border-left: 3px solid transparent;
+            background: none;
+        }
+
+        .sidebar .nav-pills .nav-link:hover {
+            background: #f0f7ff;
+            color: #3b82f6;
+        }
+
+        .sidebar .nav-pills .nav-link.active {
+            background: #eff6ff;
+            color: #3b82f6;
+            border-left-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-pills .nav-link i {
+            width: 18px;
+            text-align: center;
+        }
+
+        /* Topbar */
+        .topbar {
+            margin-left: 240px;
+            height: 60px;
+            background: #fff;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        .topbar-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Main */
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+        }
+
+        /* Cards */
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .stat-change {
+            font-size: 11px;
+            color: #ef4444;
+        }
+
+        .stat-change.up {
+            color: #22c55e;
+        }
+
+        .card-custom {
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            padding: 20px;
+        }
+
+        /* Chart */
+        .chart-area {
+            height: 300px;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0) 100%);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .chart-line {
+            position: absolute;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
+
+        .chart-bar {
+            width: 40px;
+            background: #3b82f6;
+            border-radius: 4px 4px 0 0;
+            margin: 0 8px;
+        }
+
+        .chart-bar.light {
+            background: #dbeafe;
+        }
+
+        .browser-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #f3f4f6;
+        }
+
+        .browser-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: #3b82f6;
+        }
+
+        .donut-chart {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: conic-gradient(#3b82f6 0% 45%, #22c55e 45% 75%, #93c5fd 75% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .donut-hole {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        /* Table */
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-custom th {
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e9ecef;
+            text-align: left;
+        }
+
+        .table-custom td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: #4b5563;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .table-custom tr:hover {
+            background: #f9fafb;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 4px;
+        }
+
+        .tag-blue {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .tag-green {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+
+        .tag-red {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .tag-yellow {
+            background: #fefce8;
+            color: #eab308;
+        }
+
+        .pagination-custom {
+            display: flex;
+            gap: 6px;
+        }
+
+        .page-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .page-btn.active {
+            background: #3b82f6;
+            color: #fff;
+            border-color: #3b82f6;
+        }
+
+        /* Project */
+        .project-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .project-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .project-tag.design {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .project-tag.dev {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+
+        .team-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-right: -8px;
+            border: 2px solid #fff;
+        }
+
+        .team-avatar.colored {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .tab-btn {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            color: #9ca3af;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .search-box {
+            padding: 8px 16px 8px 40px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 220px;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #3b82f6;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .view-btn {
+            width: 38px;
+            height: 38px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+
+        .view-btn.active {
+            background: #3b82f6;
+            color: #fff;
+            border-color: #3b82f6;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* tab-pane animation */
+        .tab-content>.tab-pane {
+            transition: opacity 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <!-- Bootstrap nav-pills ашиглан tab шилжүүлэг хийж байна -->
+    <!-- data-bs-toggle="pill" = дарахад tab солигдоно -->
+    <!-- data-bs-target="#analytics" = аль tab-pane руу шилжихийг зааж байна -->
+    <div class="sidebar">
+        <div class="sidebar-brand"><i class="fas fa-cube me-2"></i>Dashonic</div>
+
+        <div class="nav nav-pills flex-column" id="sidebarNav" role="tablist">
+            <div class="sidebar-section">Dashboards</div>
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#analytics" type="button" role="tab">
+                <i class="fas fa-chart-line"></i> Analytics
+            </button>
+
+            <div class="sidebar-section">Applications</div>
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#users" type="button" role="tab">
+                <i class="fas fa-users"></i> Contacts
+            </button>
+
+            <div class="sidebar-section">Pages</div>
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#projects" type="button" role="tab">
+                <i class="fas fa-project-diagram"></i> Projects
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== TOPBAR ===== -->
+    <div class="topbar">
+        <div style="font-size:16px;font-weight:600;color:#1f2937;" id="pageTitle">Analytics</div>
+        <div class="topbar-user">
+            <i class="fas fa-bell" style="color:#9ca3af;"></i>
+            <i class="fas fa-cog" style="color:#9ca3af;"></i>
+            <div class="topbar-avatar">KD</div>
+            <span>Kate Dudley</span>
+        </div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <!-- Bootstrap tab-content: nav-pills дарахад tab-pane солигдоно -->
+    <!-- show active = анхдагчаар харагдах tab -->
+    <!-- fade = шилжих animation -->
+    <div class="main-content">
+        <div class="tab-content" id="sidebarContent">
+
+            <!-- ==================== TAB 1: ANALYTICS ==================== -->
+            <div class="tab-pane fade show active" id="analytics" role="tabpanel">
+
+                <!-- Stat cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:#eff6ff;color:#3b82f6;"><i
+                                    class="fas fa-users"></i></div>
+                            <div>
+                                <div class="stat-label">Users</div>
+                                <div class="stat-value">2.2 k</div>
+                                <div class="stat-change">1.2% <i class="fas fa-arrow-down"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:#fef2f2;color:#ef4444;"><i
+                                    class="fas fa-mouse-pointer"></i></div>
+                            <div>
+                                <div class="stat-label">Sessions</div>
+                                <div class="stat-value">3.85 k</div>
+                                <div class="stat-change">1.2% <i class="fas fa-arrow-down"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:#eff6ff;color:#3b82f6;"><i
+                                    class="fas fa-clock"></i></div>
+                            <div>
+                                <div class="stat-label">Session Duration</div>
+                                <div class="stat-value">1 min</div>
+                                <div class="stat-change">1.1% <i class="fas fa-arrow-down"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background:#eff6ff;color:#3b82f6;"><i
+                                    class="fas fa-chart-bar"></i></div>
+                            <div>
+                                <div class="stat-label">Bounce Rate</div>
+                                <div class="stat-value">24.03%</div>
+                                <div class="stat-change">1.2% <i class="fas fa-arrow-down"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart + Activity -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-8">
+                        <div class="card-custom">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h6 class="fw-bold">Daily Active Users</h6>
+                                <span style="font-size:13px;color:#9ca3af;">Sort By: Yearly</span>
+                            </div>
+                            <div class="d-flex gap-4 mb-3" style="font-size:13px;">
+                                <span><strong style="font-size:18px;">18.2 k</strong> Total Visitors</span>
+                                <span style="color:#22c55e;font-weight:600;">3.85 k Sessions</span>
+                                <span>24.03% Bounce Rate</span>
+                            </div>
+                            <div class="chart-area">
+                                <div class="chart-line" style="top:35%;"></div>
+                                <div class="chart-line" style="top:55%;opacity:0.3;"></div>
+                                <div class="chart-line" style="top:75%;opacity:0.15;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card-custom">
+                            <h6 class="fw-bold mb-3">User Activity</h6>
+                            <div style="display:flex;align-items:flex-end;gap:6px;height:200px;padding-top:20px;">
+                                <div style="flex:1;text-align:center;">
+                                    <div class="chart-bar light" style="height:40%;"></div>
+                                    <div class="chart-bar" style="height:65%;margin-top:4px;"></div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Jan</div>
+                                </div>
+                                <div style="flex:1;text-align:center;">
+                                    <div class="chart-bar light" style="height:55%;"></div>
+                                    <div class="chart-bar" style="height:80%;margin-top:4px;"></div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Feb</div>
+                                </div>
+                                <div style="flex:1;text-align:center;">
+                                    <div class="chart-bar light" style="height:35%;"></div>
+                                    <div class="chart-bar" style="height:50%;margin-top:4px;"></div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Mar</div>
+                                </div>
+                                <div style="flex:1;text-align:center;">
+                                    <div class="chart-bar light" style="height:60%;"></div>
+                                    <div class="chart-bar" style="height:90%;margin-top:4px;"></div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Apr</div>
+                                </div>
+                                <div style="flex:1;text-align:center;">
+                                    <div class="chart-bar light" style="height:45%;"></div>
+                                    <div class="chart-bar" style="height:70%;margin-top:4px;"></div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px;">May</div>
+                                </div>
+                                <div style="flex:1;text-align:center;">
+                                    <div class="chart-bar light" style="height:50%;"></div>
+                                    <div class="chart-bar" style="height:60%;margin-top:4px;"></div>
+                                    <div style="font-size:11px;color:#9ca3af;margin-top:4px;">Jun</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom cards -->
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="card-custom">
+                            <div class="mb-3"><span class="stat-label">New Visitors</span><br><strong
+                                    style="font-size:18px;">1.2 k</strong> <span class="stat-change up">0.2%</span>
+                            </div>
+                            <div class="mb-3"><span class="stat-label">Users</span><br><strong
+                                    style="font-size:18px;">2.2 k</strong></div>
+                            <div><span class="stat-label">Sessions</span><br><strong style="font-size:18px;">3.85
+                                    k</strong> <span class="stat-change">1.2%</span></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-custom">
+                            <h6 class="fw-bold mb-3">Visitors by Browser</h6>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1"><span
+                                        style="font-size:13px;">Chrome</span><span style="font-size:13px;">82%</span>
+                                </div>
+                                <div class="browser-bar">
+                                    <div class="browser-fill" style="width:82%;"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1"><span
+                                        style="font-size:13px;">Firefox</span><span style="font-size:13px;">70%</span>
+                                </div>
+                                <div class="browser-bar">
+                                    <div class="browser-fill" style="width:70%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between mb-1"><span
+                                        style="font-size:13px;">Safari</span><span style="font-size:13px;">76%</span>
+                                </div>
+                                <div class="browser-bar">
+                                    <div class="browser-fill" style="width:76%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-custom text-center">
+                            <h6 class="fw-bold mb-3">Visitors Source</h6>
+                            <div class="donut-chart">
+                                <div class="donut-hole"></div>
+                            </div>
+                            <div class="mt-3" style="font-size:12px;color:#9ca3af;"><span style="color:#3b82f6;">●
+                                    Social</span><span class="ms-2" style="color:#22c55e;">● Direct</span><span
+                                    class="ms-2" style="color:#93c5fd;">● Others</span></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-custom">
+                            <h6 class="fw-bold mb-3">Traffic Source</h6>
+                            <div class="mb-3" style="font-size:13px;"><span
+                                    style="color:#3b82f6;font-weight:700;">#1</span> www.abc.com <br><strong>3.82
+                                    k</strong></div>
+                            <div class="mb-3" style="font-size:13px;"><span
+                                    style="color:#3b82f6;font-weight:700;">#2</span> www.xyz.com <br><strong>3.04
+                                    k</strong></div>
+                            <div style="font-size:13px;"><span style="color:#3b82f6;font-weight:700;">#3</span>
+                                www.abc123.com <br><strong>2.64 k</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 2: USER LIST ==================== -->
+            <div class="tab-pane fade" id="users" role="tabpanel">
+                <div class="card-custom">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Contact List (834)</h6>
+                        <div class="d-flex gap-2">
+                            <div class="view-btn active"><i class="fas fa-list"></i></div>
+                            <div class="view-btn"><i class="fas fa-th"></i></div>
+                            <button class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add New</button>
+                        </div>
+                    </div>
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Email</th>
+                                <th>Tags</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><span class="user-avatar">DR</span>Donald Risher</td>
+                                <td>UI/UX Designer</td>
+                                <td>DonaldRisher@Dashonic.com</td>
+                                <td><span class="tag tag-blue">Photoshop</span><span
+                                        class="tag tag-red">Illustrator</span></td>
+                                <td><button class="action-btn"><i class="fas fa-ellipsis-h"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><span class="user-avatar">HB</span>Helen Barron</td>
+                                <td>Frontend Developer</td>
+                                <td>HelenBarron@Dashonic.com</td>
+                                <td><span class="tag tag-blue">Html</span><span class="tag tag-green">Css</span><span
+                                        class="tag tag-yellow">2+ more</span></td>
+                                <td><button class="action-btn"><i class="fas fa-ellipsis-h"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><span class="user-avatar">PT</span>Philip Theroux</td>
+                                <td>Backend Developer</td>
+                                <td>PhilipTheroux@Dashonic.com</td>
+                                <td><span class="tag tag-blue">Php</span><span class="tag tag-red">Java</span><span
+                                        class="tag tag-green">Python</span></td>
+                                <td><button class="action-btn"><i class="fas fa-ellipsis-h"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><span class="user-avatar">JM</span>Justin McClain</td>
+                                <td>Full Stack Developer</td>
+                                <td>JustinMcClain@Dashonic.com</td>
+                                <td><span class="tag tag-red">Ruby</span><span class="tag tag-blue">Php</span><span
+                                        class="tag tag-yellow">2+ more</span></td>
+                                <td><button class="action-btn"><i class="fas fa-ellipsis-h"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><span class="user-avatar">SC</span>Sharon Carver</td>
+                                <td>Frontend Developer</td>
+                                <td>SharonCarver@Dashonic.com</td>
+                                <td><span class="tag tag-blue">Html</span><span class="tag tag-green">Css</span><span
+                                        class="tag tag-yellow">2+ more</span></td>
+                                <td><button class="action-btn"><i class="fas fa-ellipsis-h"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td><span class="user-avatar">PD</span>Peter Dryer</td>
+                                <td>Web Designer</td>
+                                <td>PeterDryer@Dashonic.com</td>
+                                <td><span class="tag tag-blue">Html</span><span class="tag tag-green">Css</span><span
+                                        class="tag tag-yellow">2+ more</span></td>
+                                <td><button class="action-btn"><i class="fas fa-ellipsis-h"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span style="font-size:13px;color:#9ca3af;">Showing 1 to 6 of 57 entries</span>
+                        <div class="pagination-custom">
+                            <div class="page-btn"><i class="fas fa-chevron-left" style="font-size:11px;"></i></div>
+                            <div class="page-btn">1</div>
+                            <div class="page-btn active">2</div>
+                            <div class="page-btn">3</div>
+                            <div class="page-btn">4</div>
+                            <div class="page-btn">5</div>
+                            <div class="page-btn"><i class="fas fa-chevron-right" style="font-size:11px;"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 3: PROJECTS GRID ==================== -->
+            <div class="tab-pane fade" id="projects" role="tabpanel">
+                <div class="card-custom">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <button class="btn btn-outline-primary btn-sm"><i class="fas fa-plus me-1"></i>Add New</button>
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="search-wrap"><i class="fas fa-search"></i><input type="text" class="search-box"
+                                    placeholder="Search..."></div>
+                            <div class="view-btn"><i class="fas fa-list"></i></div>
+                            <div class="view-btn active"><i class="fas fa-th"></i></div>
+                        </div>
+                    </div>
+                    <div class="mb-3"><button class="tab-btn active">All</button><button
+                            class="tab-btn">Active</button><button class="tab-btn">Completed</button></div>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="project-card">
+                                <div class="d-flex justify-content-between mb-3"><span
+                                        class="project-tag design">Design</span><button class="action-btn"><i
+                                            class="fas fa-ellipsis-h"></i></button></div>
+                                <h6 class="fw-bold">Dashboard UI</h6>
+                                <p style="font-size:13px;color:#9ca3af;">Duis arcu suscipit eget</p>
+                                <div class="mt-3"><span style="font-size:12px;color:#9ca3af;">Team :</span><span
+                                        class="team-avatar">A</span><span class="team-avatar">B</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="project-card">
+                                <div class="d-flex justify-content-between mb-3"><span
+                                        class="project-tag design">Design</span><button class="action-btn"><i
+                                            class="fas fa-ellipsis-h"></i></button></div>
+                                <h6 class="fw-bold">Ecommerce App</h6>
+                                <p style="font-size:13px;color:#9ca3af;">Nemo enim ipsam sit</p>
+                                <div class="mt-3"><span style="font-size:12px;color:#9ca3af;">Team :</span><span
+                                        class="team-avatar">C</span><span class="team-avatar">D</span><span
+                                        class="team-avatar colored">E</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="project-card">
+                                <div class="d-flex justify-content-between mb-3"><span
+                                        class="project-tag dev">Development</span><button class="action-btn"><i
+                                            class="fas fa-ellipsis-h"></i></button></div>
+                                <h6 class="fw-bold">Calendar App</h6>
+                                <p style="font-size:13px;color:#9ca3af;">Itaque earum rerum ut</p>
+                                <div class="mt-3"><span style="font-size:12px;color:#9ca3af;">Team :</span><span
+                                        class="team-avatar">F</span><span class="team-avatar">G</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="project-card">
+                                <div class="d-flex justify-content-between mb-3"><span
+                                        class="project-tag dev">Development</span><button class="action-btn"><i
+                                            class="fas fa-ellipsis-h"></i></button></div>
+                                <h6 class="fw-bold">Kanban Board</h6>
+                                <p style="font-size:13px;color:#9ca3af;">Maecenas nec odio et ante</p>
+                                <div class="mt-3"><span style="font-size:12px;color:#9ca3af;">Team :</span><span
+                                        class="team-avatar colored">F</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="project-card">
+                                <div class="d-flex justify-content-between mb-3"><span
+                                        class="project-tag dev">Development</span><button class="action-btn"><i
+                                            class="fas fa-ellipsis-h"></i></button></div>
+                                <h6 class="fw-bold">Authentication</h6>
+                                <p style="font-size:13px;color:#9ca3af;">At vero eos et accusamus</p>
+                                <div class="mt-3"><span style="font-size:12px;color:#9ca3af;">Team :</span><span
+                                        class="team-avatar">H</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="project-card">
+                                <div class="d-flex justify-content-between mb-3"><span
+                                        class="project-tag design">Design</span><button class="action-btn"><i
+                                            class="fas fa-ellipsis-h"></i></button></div>
+                                <h6 class="fw-bold">Redesign - Landing</h6>
+                                <p style="font-size:13px;color:#9ca3af;">Neque porro quisquam</p>
+                                <div class="mt-3"><span style="font-size:12px;color:#9ca3af;">Team :</span><span
+                                        class="team-avatar colored" style="background:#ef4444;">R</span><span
+                                        class="team-avatar colored" style="background:#22c55e;">F</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="project-card">
+                                <div class="d-flex justify-content-between mb-3"><span
+                                        class="project-tag design">Design</span><button class="action-btn"><i
+                                            class="fas fa-ellipsis-h"></i></button></div>
+                                <h6 class="fw-bold">Brand Logo Design</h6>
+                                <p style="font-size:13px;color:#9ca3af;">Sed ut perspiciatis unde</p>
+                                <div class="mt-3"><span style="font-size:12px;color:#9ca3af;">Team :</span><span
+                                        class="team-avatar">I</span><span class="team-avatar">J</span><span
+                                        class="team-avatar colored" style="background:#22c55e;">E</span></div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="project-card">
+                                <div class="d-flex justify-content-between mb-3"><span
+                                        class="project-tag dev">Development</span><button class="action-btn"><i
+                                            class="fas fa-ellipsis-h"></i></button></div>
+                                <h6 class="fw-bold">Chat App</h6>
+                                <p style="font-size:13px;color:#9ca3af;">Quis autem vel eum iure</p>
+                                <div class="mt-3"><span style="font-size:12px;color:#9ca3af;">Team :</span><span
+                                        class="team-avatar">K</span><span class="team-avatar">L</span><span
+                                        class="team-avatar">M</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <span style="font-size:13px;color:#9ca3af;">Showing 1 to 8 of 24 entries</span>
+                        <div class="pagination-custom">
+                            <div class="page-btn"><i class="fas fa-chevron-left" style="font-size:11px;"></i></div>
+                            <div class="page-btn">1</div>
+                            <div class="page-btn active">2</div>
+                            <div class="page-btn">3</div>
+                            <div class="page-btn">4</div>
+                            <div class="page-btn">5</div>
+                            <div class="page-btn"><i class="fas fa-chevron-right" style="font-size:11px;"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Topbar гарчиг солих (цорын ганц JS) -->
+    <script>
+        var titles = { analytics: 'Analytics', users: 'User List', projects: 'Projects Grid' };
+        document.querySelectorAll('#sidebarNav .nav-link').forEach(function (btn) {
+            btn.addEventListener('shown.bs.tab', function () {
+                var id = btn.getAttribute('data-bs-target').replace('#', '');
+                document.getElementById('pageTitle').textContent = titles[id];
+            });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 
+      viewport - Гар утас, таблет дээр хуудсыг зөв харуулахын тулд.
+      width=device-width: хуудасны өргөнийг төхөөрөмжийн дэлгэцийн өргөнтэй тэнцүүлнэ.
+      initial-scale=1.0: анхны томруулалтын хэмжээ = 1 (томруулаагүй).
+    -->
+
+    <title>Нэвтрэх</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- 
+      preconnect - Google Fonts серверт урьдчилж холбогдоно.
+      Фонт татахаас өмнө холболтыг бэлдэж, хурдыг нэмэгдүүлнэ. 
+    -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 
+      Inter фонтыг Google Fonts-оос татаж байна.
+      wght@300;400;500;600;700 - 5 өөр зузаантай (нарийн → зузаан) хувилбарыг татна.
+      display=swap - Фонт татагдтал системийн фонтыг түр харуулна (хуудас хоосон харагдахгүй).
+    -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- 
+      Font Awesome 6.5.1 - Дүрсний (icon) сан.
+      Цоож, дугтуй, нүд, Google, Facebook гэх мэт бүх icon-уудыг энд авна.
+    -->
+
+    <style>
+        * {
+            margin: 0;      /* Бүх элементийн гадна зай = 0 */
+            padding: 0;     /* Бүх элементийн дотор зай = 0 */
+            box-sizing: border-box; 
+            /* 
+              box-sizing: border-box гэдэг нь элементийн өргөн/өндөрт 
+              padding, border-ийг оруулж тооцно.
+              Жишээ: width: 100px гэвэл padding+border+content = 100px.
+              Үүнгүй бол content = 100px + padding + border → том болно.
+            */
+        }
+
+        :root {
+            /* 
+              :root - HTML баримтын хамгийн дээд элемент.
+              Энд CSS хувьсагчуудыг (variables) зарлана.
+              Дараа нь var(--нэр) гэж дуудна.
+              Нэг газраас бүх өнгийг удирдах боломжтой болно.
+            */
+            --bg: #0a0a0f;              /* Хуудасны арын өнгө - маш бараан хар */
+            --surface: #12121a;          /* Картын арын өнгө - бараан цэнхэр хар */
+            --surface-2: #1a1a26;        /* Input талбаруудын арын өнгө */
+            --surface-3: #22222e;        /* Focus хийсэн input-ын арын өнгө */
+            --border: #2a2a3a;           /* Хүрээний өнгө - бараан саарал */
+            --border-focus: #6c5ce7;     /* Focus хийсэн хүрээний өнгө - ягаан */
+            --accent: #6c5ce7;           /* Үндсэн онцлох өнгө - ягаан */
+            --accent-glow: rgba(108, 92, 231, 0.4); /* Ягаан гэрэлтэх эффект (40% тунгалаг) */
+            --accent-2: #a29bfe;         /* Хоёрдогч ягаан - цайвар */
+            --text: #e8e8f0;             /* Текстийн үндсэн өнгө - цагаан */
+            --text-muted: #6b6b80;       /* Бүдэг текст - placeholder, тайлбар */
+            --white: #ffffff;            /* Цэвэр цагаан */
+            --error: #ff6b6b;            /* Алдааны өнгө - улаан */
+            --error-bg: rgba(255, 107, 107, 0.1); /* Алдааны арын өнгө - бүдэг улаан */
+            --success: #51cf66;          /* Амжилтын өнгө - ногоон */
+            --success-bg: rgba(81, 207, 102, 0.1); /* Амжилтын арын өнгө - бүдэг ногоон */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;  /* Inter фонт, байхгүй бол sans-serif */
+            min-height: 100vh;    /* Хамгийн бага өндөр = дэлгэцийн бүтэн өндөр (viewport height) */
+            background: var(--bg); /* Арын өнгө - бараан хар */
+            display: flex;         /* Flexbox layout - дотор элементүүдийг чөлөөтэй байрлуулна */
+            align-items: center;   /* Босоо чиглэлд голлуулна */
+            justify-content: center; /* Хөндлөн чиглэлд голлуулна */
+            position: relative;    /* ::before элементийн суурь болно */
+            overflow: hidden;      /* Халих агуулгыг нуух - арын анимаци хуудсаас гарахгүй */
+        }
+
+        /* ========== Арын гэрлийн эффект (Ambient Background) ========== */
+        body::before {
+            /* 
+              ::before - body-ийн өмнө виртуал элемент үүсгэнэ.
+              Энэ нь хуудасны арын бүдэг ягаан гэрэлтүүлэг юм.
+            */
+            content: '';           /* Хоосон агуулга - заавал байх ёстой */
+            position: fixed;       /* Дэлгэцтэй хамт бэхлэгдэнэ */
+            top: -50%;             /* Дээд талаас -50% - дэлгэцнээс гаднах хэсэг */
+            left: -50%;            /* Зүүн талаас -50% */
+            width: 200%;           /* Дэлгэцнээс 2 дахин өргөн */
+            height: 200%;          /* Дэлгэцнээс 2 дахин өндөр */
+            background:
+                /* 3 ялгаатай radial-gradient давхарлана - бүдэг ягаан гэрэл үүсгэнэ */
+                radial-gradient(ellipse at 20% 50%, rgba(108, 92, 231, 0.08) 0%, transparent 50%),
+                /* Зүүн талд бүдэг ягаан тойрог */
+                radial-gradient(ellipse at 80% 20%, rgba(162, 155, 254, 0.06) 0%, transparent 50%),
+                /* Баруун дээд талд цайвар ягаан */
+                radial-gradient(ellipse at 50% 80%, rgba(90, 88, 102, 0.04) 0%, transparent 50%);
+                /* Доод голд бүдэг саарал */
+            animation: ambientMove 20s ease-in-out infinite alternate;
+            /* 
+              ambientMove анимацийг 20 секунд тутам давтана.
+              ease-in-out: аажим эхэлж аажим дуусна.
+              infinite: тасралтгүй.
+              alternate: урагш-хойш ээлжилж хөдөлнө.
+            */
+            z-index: 0;  /* Арын давхарга - бүх зүйлийн ард */
+        }
+
+        @keyframes ambientMove {
+            /* Арын гэрлийн хөдөлгөөний анимаци */
+            0% { transform: translate(0, 0) rotate(0deg); }
+            /* Эхэнд: хөдөлгөөнгүй */
+            100% { transform: translate(-3%, 3%) rotate(3deg); }
+            /* Төгсгөлд: бага зэрэг зүүн доош хөдөлж, 3 градус эргэнэ */
+        }
+
+        /* ========== Нэвтрэх карт (Login Card) ========== */
+        .login-card {
+            position: relative;    /* Дотор элементүүдийн суурь */
+            z-index: 1;            /* Арын эффектээс дээр гарна */
+            width: 100%;           /* Эцэг элементийн бүтэн өргөн */
+            max-width: 420px;      /* Хамгийн их өргөн 420px */
+            margin: 20px;          /* Гадна зай 20px (жижиг дэлгэц дээр ирмэгээс зай) */
+            padding: 48px 40px;    /* Дотор зай: дээр/доор 48px, зүүн/баруун 40px */
+            background: var(--surface); /* Арын өнгө - бараан */
+            border: 1px solid var(--border); /* 1px хүрээ */
+            border-radius: 24px;   /* Булан дугуйрсан - 24px радиус */
+            box-shadow:
+                0 0 0 1px rgba(108, 92, 231, 0.05),  /* Нарийн ягаан хүрээ */
+                0 20px 60px rgba(0, 0, 0, 0.5),       /* Том бараан сүүдэр */
+                0 0 100px rgba(108, 92, 231, 0.03);    /* Маш том бүдэг ягаан гэрэл */
+        }
+
+        /* ========== Хэрэглэгчийн дүрсний тойрог (Avatar) ========== */
+        .avatar {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;    /* Бүрэн дугуй хэлбэр */
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            /* 135 градусын өнцгөөр ягаан → цайвар ягаан шилжилт */
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Icon-г голлуулна */
+            margin: 0 auto 28px;    /* Хөндлөнд голлуулж, доор 28px зай */
+            box-shadow: 0 8px 32px var(--accent-glow);
+            /* Доошоо ягаан гэрэлтэх сүүдэр */
+        }
+
+        .avatar i {
+            font-size: 32px;       /* Icon-ны хэмжээ */
+            color: var(--white);   /* Цагаан өнгө */
+        }
+
+        /* ========== Гарчиг, дэд гарчиг ========== */
+        .form-title {
+            text-align: center;    /* Голлуулна */
+            font-size: 1.6rem;     /* Том үсэг (≈25.6px) */
+            font-weight: 700;      /* Зузаан (Bold) */
+            color: var(--text);    /* Цагаан текст */
+            margin-bottom: 6px;    /* Доор 6px зай */
+        }
+
+        .form-subtitle {
+            text-align: center;
+            font-size: 0.88rem;    /* Жижиг үсэг (≈14px) */
+            color: var(--text-muted); /* Бүдэг саарал */
+            margin-bottom: 32px;   /* Доор 32px зай */
+        }
+
+        /* ========== Мэдэгдэл (Alert) ========== */
+        .alert {
+            display: none;         /* Анхнаасаа нуугдсан */
+            padding: 12px 16px;    /* Дотор зай */
+            border-radius: 12px;   /* Дугуй булан */
+            font-size: 0.82rem;    /* Жижиг текст */
+            margin-bottom: 20px;
+            align-items: center;   /* Icon ба текстийг зэрэгцүүлнэ */
+            gap: 10px;             /* Элементүүдийн хоорондох зай */
+        }
+
+        .alert.show { display: flex; }
+        /* .show класс нэмэгдэхэд flex болж харагдана */
+
+        .alert-error {
+            background: var(--error-bg);   /* Бүдэг улаан ар */
+            color: var(--error);            /* Улаан текст */
+            border: 1px solid rgba(255, 107, 107, 0.2); /* Бүдэг улаан хүрээ */
+        }
+
+        .alert-success {
+            background: var(--success-bg);  /* Бүдэг ногоон ар */
+            color: var(--success);           /* Ногоон текст */
+            border: 1px solid rgba(81, 207, 102, 0.2); /* Бүдэг ногоон хүрээ */
+        }
+
+        .alert i { position: static; transform: none; }
+        /* Alert дотор icon-д тусгай байрлал хэрэггүй */
+
+        .alert .close-alert {
+            margin-left: auto;     /* Баруун тал руу түлхэнэ (flex дотор) */
+            background: none;      /* Ар өнгөгүй */
+            border: none;          /* Хүрээгүй */
+            cursor: pointer;       /* Гар хэлбэрт курсор */
+            color: inherit;        /* Эцэг элементийн өнгийг авна */
+            font-size: 1.1rem;
+            opacity: 0.6;          /* 60% тунгалаг */
+        }
+
+        .alert .close-alert:hover { opacity: 1; }
+        /* Хулгана дээрээс өнгөрөхөд бүрэн тод болно */
+
+        /* ========== Оролтын талбар (Input Group) ========== */
+        .input-group {
+            position: relative;    /* Icon-г абсолют байрлуулах суурь */
+            margin-bottom: 18px;   /* Доор 18px зай */
+        }
+
+        .input-group i.field-icon {
+            /* Input-ын зүүн талд байрлах icon */
+            position: absolute;    /* Эцэг элементийн дотор чөлөөтэй байрлуулна */
+            left: 16px;            /* Зүүнээс 16px */
+            top: 50%;              /* Дээрээс 50% */
+            transform: translateY(-50%); /* Босоо чиглэлд яг голлуулна */
+            color: var(--text-muted);    /* Бүдэг саарал */
+            font-size: 0.9rem;
+            transition: color 0.3s;      /* Өнгө 0.3 секундэд аажим солигдоно */
+        }
+
+        .input-group input {
+            width: 100%;           /* Бүтэн өргөн */
+            padding: 14px 16px 14px 46px;
+            /* 
+              padding: дээр баруун доор зүүн
+              Зүүн тал 46px = icon-д зай гаргана 
+            */
+            background: var(--surface-2); /* Бараан ар */
+            border: 1px solid var(--border); /* Бараан хүрээ */
+            border-radius: 12px;   /* Дугуй булан */
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text);    /* Цагаан текст */
+            outline: none;         /* Хөтчийн анхны focus хүрээг арилгана */
+            transition: all 0.3s ease; /* Бүх өөрчлөлт 0.3с-д аажим */
+        }
+
+        .input-group input::placeholder {
+            /* Placeholder текст - "Имэйл хаяг", "Нууц үг" */
+            color: var(--text-muted); /* Бүдэг саарал өнгө */
+        }
+
+        .input-group input:focus {
+            /* Input дээр дарахад (focus хийхэд) */
+            border-color: var(--accent);   /* Хүрээ ягаан болно */
+            background: var(--surface-3);  /* Ар өнгө арай цайвар болно */
+            box-shadow: 0 0 0 3px var(--accent-glow);
+            /* Хүрээний гаднах 3px ягаан гэрэл */
+        }
+
+        .input-group:focus-within i.field-icon {
+            /* Input focus болоход icon-ны өнгө солигдоно */
+            color: var(--accent-2); /* Цайвар ягаан */
+        }
+
+        /* ========== Нууц үг харуулах/нуух товч ========== */
+        .password-wrapper input {
+            padding-right: 48px;   /* Баруун талд нүдний icon-д зай гаргана */
+        }
+
+        .toggle-password {
+            position: absolute;    /* Input дотор баруун талд байрлана */
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%); /* Босоо голлуулна */
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding: 4px;
+            transition: color 0.3s;
+            z-index: 2;            /* Input-аас дээр гарна */
+        }
+
+        .toggle-password:hover { color: var(--accent-2); }
+        /* Хулгана дээрээс → цайвар ягаан */
+
+        /* ========== Алдааны загвар (Validation) ========== */
+        .input-group.error input {
+            /* .error класс нэмэгдэхэд input улаан болно */
+            border-color: var(--error);    /* Улаан хүрээ */
+            background: var(--error-bg);   /* Бүдэг улаан ар */
+        }
+
+        .input-group.error input:focus {
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+            /* Алдаатай input focus → улаан гэрэл */
+        }
+
+        .input-group .error-msg {
+            display: none;         /* Анхнаасаа нуугдсан */
+            font-size: 0.75rem;    /* Маш жижиг текст */
+            color: var(--error);   /* Улаан */
+            margin-top: 6px;
+            padding-left: 4px;
+        }
+
+        .input-group.error .error-msg { display: block; }
+        /* .error класс байвал алдааны мессеж харагдана */
+
+        /* ========== "Намайг сана" ба "Нууц үг мартсан" ========== */
+        .form-options {
+            display: flex;
+            justify-content: space-between; /* Хоёр талд тараана */
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;             /* Checkbox ба текст хооронд 8px */
+            cursor: pointer;      /* Гар хэлбэрт курсор */
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .remember-me input[type="checkbox"] { display: none; }
+        /* Жинхэнэ checkbox-г нуугаад, өөрсдийн загвартай checkmark харуулна */
+
+        .remember-me .checkmark {
+            /* Өөрийн загвартай checkbox */
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;    /* Бага зэрэг дугуйрсан */
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            background: var(--surface-2);
+        }
+
+        .remember-me .checkmark i {
+            font-size: 10px;
+            color: var(--white);
+            opacity: 0;            /* Анхнаасаа нуугдсан */
+            position: static;
+            transform: none;
+        }
+
+        .remember-me input:checked ~ .checkmark {
+            /* 
+              Checkbox чагтлагдсан (checked) бол .checkmark-ийн загвар:
+              ~ = ерөнхий ах дүү сонгогч (general sibling selector)
+            */
+            background: var(--accent);     /* Ягаан ар */
+            border-color: var(--accent);   /* Ягаан хүрээ */
+        }
+
+        .remember-me input:checked ~ .checkmark i { opacity: 1; }
+        /* Чагтлагдсан бол ✓ тэмдэг харагдана */
+
+        .forgot-link {
+            font-size: 0.82rem;
+            color: var(--accent-2);        /* Цайвар ягаан */
+            text-decoration: none;         /* Доогуур зураасгүй */
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .forgot-link:hover { color: var(--accent); }
+        /* Hover → бараан ягаан */
+
+        /* ========== Нэвтрэх товч (Login Button) ========== */
+        .login-btn {
+            width: 100%;           /* Бүтэн өргөн */
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            /* Ягаан gradient ар */
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;      /* Semi-bold */
+            letter-spacing: 1px;   /* Үсэг хоорондын зай нэмнэ */
+            text-transform: uppercase; /* БҮХ ҮСГИЙГ ТОМ болгоно */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 24px var(--accent-glow);
+            /* Доор ягаан сүүдэр */
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);   /* Дээш 2px хөдөлнө */
+            box-shadow: 0 8px 32px var(--accent-glow);
+            /* Сүүдэр томорно */
+        }
+
+        .login-btn:active { transform: translateY(0); }
+        /* Дарах үед буцаж доошлоно */
+
+        .login-btn:disabled {
+            opacity: 0.6;          /* Бүдэг */
+            cursor: not-allowed;   /* Хориотой курсор */
+            transform: none !important; /* Хөдөлгөөнгүй */
+        }
+
+        .login-btn .spinner {
+            /* Ачаалж байгаа анимаци (эргэлддэг дугуй) */
+            display: none;         /* Анхнаасаа нуугдсан */
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.3); /* Бүдэг цагаан тойрог */
+            border-top-color: #fff; /* Дээд хэсэг нь цагаан - эргэлт мэдрэгдэнэ */
+            border-radius: 50%;    /* Бүрэн дугуй */
+            animation: spin 0.7s linear infinite;
+            /* 0.7 секунд тутам нэг бүтэн эргэлт, тасралтгүй */
+            margin: 0 auto;
+        }
+
+        .login-btn.loading .btn-text { display: none; }
+        /* Loading үед "Нэвтрэх" текстийг нуух */
+
+        .login-btn.loading .spinner { display: inline-block; }
+        /* Loading үед spinner-г харуулах */
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+            /* 0°-с 360° хүртэл бүтэн эргэнэ */
+        }
+
+        /* ========== "эсвэл" зурвас (Divider) ========== */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;             /* Шугам ба текст хооронд 14px */
+            margin: 24px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            /* "эсвэл" текстийн зүүн ба баруун талд хэвтээ шугам */
+            content: '';
+            flex: 1;               /* Үлдсэн зайг дүүргэнэ */
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider span {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ========== Нийгмийн сүлжээний товчууд (Social Buttons) ========== */
+        .social-btns {
+            display: flex;
+            gap: 12px;             /* Товчнуудын хоорондох зай */
+            justify-content: center;
+        }
+
+        .social-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--surface-2);
+            text-decoration: none; /* Холбоосын доогуур зураасыг арилгана */
+        }
+
+        .social-btn i {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            position: static;
+            transform: none;
+        }
+
+        .social-btn:hover {
+            border-color: var(--accent);   /* Hover → ягаан хүрээ */
+            background: var(--surface-3);
+            transform: translateY(-2px);   /* Дээш 2px */
+        }
+
+        .social-btn:hover i { color: var(--accent-2); }
+        /* Icon ягаан болно */
+
+        /* ========== Бүртгүүлэх холбоос (Footer) ========== */
+        .form-footer {
+            text-align: center;
+    margin-top: 24px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .form-footer a {
+            color: var(--accent-2);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover { color: var(--accent); }
+
+        /* ========== Жижиг дэлгэцэнд зориулсан (Responsive) ========== */
+        @media (max-width: 480px) {
+            /* 
+              Дэлгэцийн өргөн 480px-с бага бол эдгээр загвар идэвхжинэ.
+              Гар утсанд тохирно.
+            */
+            .login-card {
+                padding: 36px 24px;    /* Дотор зай багасна */
+                margin: 16px;
+                border-radius: 20px;   /* Булан арай жижиг */
+            }
+
+            .avatar { width: 64px; height: 64px; }  /* Тойрог жижигрэнэ */
+            .avatar i { font-size: 26px; }            /* Icon жижигрэнэ */
+            .form-title { font-size: 1.4rem; }        /* Гарчиг жижигрэнэ */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+    <!-- Нэвтрэх формын үндсэн карт/контейнер -->
+
+        <div class="avatar" aria-hidden="true">
+        <!-- 
+          aria-hidden="true" - Дэлгэцийн уншигч (screen reader) энэ элементийг алгасна.
+          Учир нь энэ зүгээр л чимэглэл, мэдээлэл агуулахгүй. 
+        -->
+            <i class="fas fa-user"></i>
+            <!-- Font Awesome-ийн хэрэглэгчийн дүрс (user icon) -->
+        </div>
+
+        <h2 class="form-title">Нэвтрэх</h2>
+        <!-- h2 - Хоёрдогч гарчиг. "Нэвтрэх" гэсэн текст -->
+
+        <p class="form-subtitle">Имэйл, нууц үгээ оруулна уу</p>
+        <!-- p - Параграф. Хэрэглэгчид зориулсан тайлбар -->
+
+        <div class="alert alert-error" id="alertBox" role="alert">
+        <!-- 
+          Мэдэгдэл хайрцаг. Анхнаасаа display:none (нуугдсан).
+          role="alert" - Дэлгэцийн уншигчид "энэ бол анхааруулга" гэдгийг мэдэгдэнэ.
+          id="alertBox" - JavaScript-ээс олж удирдана.
+        -->
+            <i class="fas fa-exclamation-circle"></i>
+            <!-- Анхааруулгын тэмдэг (!) дүрс -->
+
+            <span id="alertMsg"></span>
+            <!-- Мэдэгдлийн текст энд орно. JavaScript-ээр дүүргэгдэнэ -->
+
+            <button class="close-alert" onclick="closeAlert()" aria-label="Хаах">&times;</button>
+            <!-- 
+              × товч - мэдэгдлийг хаах.
+              onclick="closeAlert()" - дарахад closeAlert() функц ажиллана.
+              &times; = × тэмдэг (HTML entity).
+              aria-label="Хаах" - Дэлгэцийн уншигчид "Хаах" гэж хэлнэ.
+            -->
+        </div>
+
+        <form id="loginForm" novalidate>
+        <!-- 
+          form - Маягт. Хэрэглэгчийн оруулсан мэдээллийг цуглуулна.
+          id="loginForm" - JavaScript-ээс олно.
+          novalidate - Хөтчийн анхны шалгалтыг унтраана. 
+          Бид өөрийн JavaScript шалгалтыг хэрэглэнэ.
+        -->
+
+            <div class="input-group" id="emailGroup">
+            <!-- Имэйл оруулах бүлэг -->
+
+                <i class="fas fa-envelope field-icon" aria-hidden="true"></i>
+                <!-- Дугтуй дүрс (имэйл icon) -->
+
+                <input type="email" id="email" placeholder="Имэйл хаяг" required autocomplete="email" aria-label="Имэйл хаяг">
+                <!-- 
+                  type="email" - Имэйл төрлийн input. Гар утсанд @ товч гарна.
+                  id="email" - JavaScript-ээс олно.
+                  placeholder="Имэйл хаяг" - Хоосон байх үед бүдэг текст харагдана.
+                  required - Заавал бөглөх ёстой (гэхдээ novalidate-тай учир хөтөч шалгахгүй).
+                  autocomplete="email" - Хөтөч хуучин имэйлийг санал болгоно.
+                  aria-label - Дэлгэцийн уншигчид зориулсан нэр.
+                -->
+
+                <span class="error-msg" id="emailError">Зөв имэйл хаяг оруулна уу</span>
+                <!-- Алдааны мессеж. .error класс нэмэгдэхэд харагдана -->
+            </div>
+
+            <div class="input-group password-wrapper" id="passwordGroup">
+            <!-- 
+              Нууц үг оруулах бүлэг.
+              password-wrapper класс нь баруун талд toggle товчинд зай гаргана.
+            -->
+
+                <i class="fas fa-lock field-icon" aria-hidden="true"></i>
+                <!-- Цоож дүрс -->
+
+                <input type="password" id="password" placeholder="Нууц үг" required autocomplete="current-password" aria-label="Нууц үг">
+                <!-- 
+                  type="password" - Бичсэн зүйлийг ••••• гэж нуудаг.
+                  autocomplete="current-password" - Хөтчийн нууц үг менежер ашиглана.
+                -->
+
+                <button type="button" class="toggle-password" onclick="togglePassword()" aria-label="Нууц үг харуулах">
+                <!-- 
+                  type="button" - Энэ товч формыг илгээхгүй (submit биш).
+                  onclick="togglePassword()" - Дарахад нууц үгийг харуулах/нуух.
+                -->
+                    <i class="fas fa-eye" id="toggleIcon"></i>
+                    <!-- Нүд дүрс. Дарахад fa-eye ↔ fa-eye-slash солигдоно -->
+                </button>
+
+                <span class="error-msg" id="passwordError">Нууц үг оруулна уу</span>
+            </div>
+
+            <div class="form-options">
+            <!-- "Намайг сана" ба "Нууц үг мартсан" хоёр талд байрлана -->
+
+                <label class="remember-me">
+                <!-- label - Дарахад дотор checkbox чагтлагдана -->
+
+                    <input type="checkbox" checked>
+                    <!-- 
+                      Жинхэнэ checkbox. CSS-ээр нуугдсан (display: none).
+                      checked - Анхнаасаа чагтлагдсан.
+                    -->
+
+                    <span class="checkmark"><i class="fas fa-check"></i></span>
+                    <!-- Өөрийн загвартай checkbox. ✓ тэмдэг дотор нь. -->
+
+                    Намайг сана
+                    <!-- Текст -->
+                </label>
+
+                <a href="#" class="forgot-link">Нууц үг мартсан?</a>
+                <!-- 
+                  href="#" - Одоогоор хаашаа ч очихгүй (загвар).
+                  Жинхэнэ төсөлд нууц үг сэргээх хуудас руу чиглүүлнэ.
+                -->
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+            <!-- 
+              type="submit" - Форм илгээх товч.
+              Дарах эсвэл Enter дарахад form-ын submit event идэвхжинэ.
+            -->
+                <span class="btn-text">Нэвтрэх</span>
+                <!-- Товчны текст. Loading үед нуугдана -->
+
+                <span class="spinner"></span>
+                <!-- Эргэлддэг дугуй. Loading үед харагдана -->
+            </button>
+        </form>
+
+        <div class="divider"><span>эсвэл</span></div>
+        <!-- "──── эсвэл ────" зурвас. CSS ::before ба ::after шугам үүсгэнэ -->
+
+        <div class="social-btns">
+        <!-- Нийгмийн сүлжээний товчнууд -->
+
+            <a href="#" class="social-btn" aria-label="Google">
+                <i class="fab fa-google"></i>
+                <!-- fab = Font Awesome Brands. Google-ийн лого -->
+            </a>
+
+            <a href="#" class="social-btn" aria-label="Facebook">
+                <i class="fab fa-facebook-f"></i>
+                <!-- Facebook-ийн лого -->
+            </a>
+
+            <a href="#" class="social-btn" aria-label="Apple">
+                <i class="fab fa-apple"></i>
+                <!-- Apple-ийн лого -->
+            </a>
+        </div>
+
+        <div class="form-footer">
+            Бүртгэлгүй юу? <a href="burtguuleh.html">Бүртгүүлэх</a>
+            <!-- Бүртгүүлэх хуудас руу чиглүүлэх холбоос -->
+        </div>
+    </div>
+
+    <script>
+    /* ============================================
+       JAVASCRIPT ХЭСЭГ - Хуудасны бүх логик энд
+       ============================================ */
+
+        function togglePassword() {
+            /*
+              Нууц үгийг харуулах / нуух функц.
+              Нүд дүрс (eye icon) дарахад ажиллана.
+            */
+            const input = document.getElementById('password');
+            // password гэсэн id-тай input элементийг олно
+
+            const icon = document.getElementById('toggleIcon');
+            // toggleIcon гэсэн id-тай icon элементийг олно
+
+            if (input.type === 'password') {
+                // Хэрэв одоо нуугдмал (password) горимд байвал:
+                input.type = 'text';
+                // type-г 'text' болгоно → нууц үг харагдана
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+                // Нүд дүрсийг → зурсан нүд дүрс болгоно
+            } else {
+                // Хэрэв одоо харагдаж (text) байвал:
+                input.type = 'password';
+                // Буцааж нуух
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                // Дүрсийг буцааж нүд болгоно
+            }
+        }
+
+        function closeAlert() {
+            /*
+              Мэдэгдэл хайрцгийг хаах.
+              × товч дарахад ажиллана.
+            */
+            document.getElementById('alertBox').classList.remove('show');
+            // 'show' классыг устгана → display:none болж нуугдана
+        }
+
+        function showAlert(msg, type) {
+            /*
+              Мэдэгдэл харуулах.
+              msg = харуулах текст
+              type = 'error' эсвэл 'success'
+            */
+            const box = document.getElementById('alertBox');
+            box.className = 'alert alert-' + type + ' show';
+            /*
+              className-г бүхэлд нь солино.
+              Жишээ: 'alert alert-success show'
+              Ингэснээр хуучин type-г устгаж шинийг оноодог.
+            */
+            document.getElementById('alertMsg').textContent = msg;
+            // Мэдэгдлийн текстийг тохируулна
+        }
+
+        function isValidEmail(email) {
+            /*
+              Имэйл хаяг зөв формат эсэхийг шалгах.
+              Regex (Regular Expression) ашиглана.
+            */
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            /*
+              Regex тайлбар:
+              ^           - Мөрийн эхэн
+              [^\s@]+     - 1+ тэмдэгт (зай, @ биш)  → "user"
+              @           - @ тэмдэг заавал байх
+              [^\s@]+     - 1+ тэмдэгт (зай, @ биш)  → "domain"
+              \.          - Цэг (.) заавал байх
+              [^\s@]+     - 1+ тэмдэгт                → "com"
+              $           - Мөрийн төгсгөл
+
+              Жишээ: user@example.com → true
+                     user@          → false
+                     @example.com   → false
+            */
+        }
+
+        function clearError(id) {
+            /*
+              Оруулах талбарын алдааг арилгах.
+              id = элементийн ID (жишээ: 'emailGroup')
+            */
+            document.getElementById(id).classList.remove('error');
+            // 'error' классыг устгана → улаан хүрээ, алдааны текст алга болно
+        }
+
+        /* ========== Формын илгээх үйлдэл (Submit Handler) ========== */
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            /*
+              loginForm дээр 'submit' event сонсогч нэмнэ.
+              Хэрэглэгч "Нэвтрэх" товч дарах эсвэл Enter дарахад ажиллана.
+              e = event объект
+            */
+
+            e.preventDefault();
+            /*
+              Хөтчийн анхны үйлдлийг зогсооно.
+              Үгүй бол хуудас дахин ачаалагдана (form submit).
+              Бид JavaScript-ээр өөрсдөө удирдахыг хүснэ.
+            */
+
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const btn = document.getElementById('loginBtn');
+            let hasError = false;
+            // hasError - Алдаа байгаа эсэхийг хянах хувьсагч
+
+            /* Өмнөх алдааг цэвэрлэх */
+            clearError('emailGroup');
+            clearError('passwordGroup');
+            closeAlert();
+
+            /* ---- Имэйл шалгах ---- */
+            if (!email.value.trim() || !isValidEmail(email.value)) {
+                /*
+                  email.value.trim() - Хоосон зайг хасаад хоосон эсэхийг шалгана
+                  !isValidEmail() - Формат буруу эсэхийг шалгана
+                  Аль нэг нь буруу бол алдаа
+                */
+                document.getElementById('emailGroup').classList.add('error');
+                // 'error' класс нэмнэ → улаан хүрээ + алдааны текст
+
+                document.getElementById('emailError').textContent =
+                    !email.value.trim() ? 'Имэйл хаяг оруулна уу' : 'Зөв имэйл хаяг оруулна уу';
+                /*
+                  Ternary operator (? :):
+                  Хэрэв хоосон бол → "Имэйл хаяг оруулна уу"
+                  Хэрэв формат буруу бол → "Зөв имэйл хаяг оруулна уу"
+                */
+
+                hasError = true;
+            }
+
+            /* ---- Нууц үг шалгах ---- */
+            if (!password.value) {
+                // Нууц үг хоосон бол
+                document.getElementById('passwordGroup').classList.add('error');
+                hasError = true;
+            }
+
+            if (hasError) return;
+            /*
+              Алдаа байвал функцаас гарна.
+              Доорх код ажиллахгүй = form илгээгдэхгүй.
+            */
+
+            /* ---- Ачаалж байна (Loading) ---- */
+            btn.classList.add('loading');
+            // 'loading' класс нэмнэ → текст нуугдаж spinner харагдана
+
+            btn.disabled = true;
+            // Товчийг идэвхгүй болгоно → давхар дарахаас хамгаална
+
+            setTimeout(function() {
+                /*
+                  setTimeout - Тодорхой хугацааны дараа код ажиллуулна.
+                  2000 = 2000 миллисекунд = 2 секунд.
+                  Жинхэнэ төсөлд серверийн хариу хүлээх байсан.
+                  Энд зүгээр 2 секунд хүлээж байна (загвар).
+                */
+                btn.classList.remove('loading');
+                // Loading дуусгана → текст буцаж харагдана
+
+                btn.disabled = false;
+                // Товчийг буцааж идэвхтэй болгоно
+
+                showAlert('Амжилттай нэвтэрлээ!', 'success');
+                // Ногоон амжилтын мэдэгдэл харуулна
+            }, 2000);
+        });
+
+        /* ========== Input өөрчлөгдөхөд алдааг автоматаар арилгах ========== */
+        document.getElementById('email').addEventListener('input', function() { clearError('emailGroup'); });
+        /*
+          'input' event - Хэрэглэгч имэйл талбарт бичих бүрт ажиллана.
+          Бичиж эхлэхэд улаан алдааг арилгана → хэрэглэгчид таатай мэдрэмж.
+        */
+
+        document.getElementById('password').addEventListener('input', function() { clearError('passwordGroup'); });
+        /* Нууц үг талбарт бичих бүрт алдааг арилгана */
+    </script>
+</body>
+</html>

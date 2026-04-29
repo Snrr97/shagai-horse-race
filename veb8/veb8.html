@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="mn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хэрэглэгчийн бүртгэл</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #fff;
+            padding: 40px;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #1a1a1a;
+        }
+
+        .container {
+            display: flex;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        /* ================== ЗҮҮН ТАЛ: Form ================== */
+        .form-section {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-input {
+            padding: 16px 20px;
+            font-size: 16px;
+            border: 2px solid #3b82f6;
+            border-radius: 30px;
+            background: #e5e7eb;
+            color: #1f2937;
+            outline: none;
+            width: 100%;
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-input:focus {
+            background: #fff;
+        }
+
+        .submit-btn {
+            padding: 16px 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            background: #bfdbfe;
+            border: 2px solid #3b82f6;
+            border-radius: 30px;
+            cursor: pointer;
+            width: 180px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #93c5fd;
+        }
+
+        /* ================== БАРУУН ТАЛ: Table ================== */
+        .table-section {
+            flex: 1;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #3b82f6;
+        }
+
+        .user-table th,
+        .user-table td {
+            border: 2px solid #3b82f6;
+            padding: 20px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            background: #e5e7eb;
+        }
+
+        .user-table th {
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        /* № баганыг нарийн болгох */
+        .user-table th:first-child,
+        .user-table td:first-child {
+            width: 60px;
+        }
+
+        /* Үйлдэл баганын өргөн */
+        .user-table th:last-child,
+        .user-table td:last-child {
+            width: 100px;
+        }
+
+        /* Устгах товч */
+        .delete-btn {
+            background: #fecaca;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #ef4444;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #fca5a5;
+        }
+
+        /* Хоосон мөрний өндөр */
+        .empty-row td {
+            height: 120px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Хэрэглэгчийн бүртгэл</h1>
+
+    <div class="container">
+
+        <!-- ================== ЗҮҮН ТАЛ: Form ================== -->
+        <div class="form-section">
+            <!-- id = document.getElementById-ээр олохын тулд -->
+            <input type="text" id="ovogInput" class="form-input" placeholder="Овог . . .">
+            <input type="text" id="nerInput" class="form-input" placeholder="Нэр . . .">
+            <input type="number" id="nasInput" class="form-input" placeholder="Нас . . .">
+            <button id="submitBtn" class="submit-btn">Бүртгэх</button>
+        </div>
+
+        <!-- БАРУУН ТАЛ: Table -->
+        <div class="table-section">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Овог</th>
+                        <th>Нэр</th>
+                        <th>Нас</th>
+                        <th>Үйлдэл</th>
+                    </tr>
+                </thead>
+                <!-- Шинэ мөр нэмэх газар - tbody-г id-аар олохын тулд -->
+                <tbody id="userTableBody">
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        const ovogInput = document.getElementById("ovogInput");
+        const nerInput = document.getElementById("nerInput");
+        const nasInput = document.getElementById("nasInput");
+        const submitBtn = document.getElementById("submitBtn");
+        const tableBody = document.getElementById("userTableBody");
+
+        // Мөрийн дугаарлалтыг хадгалах хувьсагч
+        let rowCount = 0;
+
+        // "Бүртгэх" товч дарахад ажиллах функц
+        submitBtn.addEventListener("click", function () {
+
+            // Input-уудын утгыг авах
+            const ovog = ovogInput.value.trim();
+            const ner = nerInput.value.trim();
+            const nas = nasInput.value.trim();
+
+            // Шалгалт - хоосон бол буцаах
+            if (ovog === "" || ner === "" || nas === "") {
+                alert("Бүх талбарыг бөглөнө үү!");
+                return;
+            }
+
+            rowCount++;
+
+            //  DOM ЭЛЕМЕНТ ҮҮСГЭХ - document.createElement
+            const newRow = document.createElement("tr");
+
+            // DOM ЭЛЕМЕНТ ӨӨРЧЛӨХ - innerHTML
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td>${ovog.toUpperCase()}</td>
+                <td>${ner.toUpperCase()}</td>
+                <td>${nas}</td>
+                <td><button class="delete-btn">✕</button></td>
+            `;
+
+            // 4. ЭЛЕМЕНТЭД ХҮҮХЭД ЭЛЕМЕНТ НЭМЭХ - appendChild
+            tableBody.appendChild(newRow);
+            // 5. DOM ЭЛЕМЕНТ УСТГАХ - remove()
+            const deleteBtn = newRow.querySelector(".delete-btn");
+            deleteBtn.addEventListener("click", function () {
+                newRow.remove();
+                updateRowNumbers();
+            });
+
+            // Input цэвэрлэх
+            ovogInput.value = "";
+            nerInput.value = "";
+            nasInput.value = "";
+
+            // Эхний input руу focus хийх
+            ovogInput.focus();
+        });
+        // Мөр устгасны дараа дугаарлалтыг шинэчлэх функц
+        // document.getElementsByTagName ашиглан бүх tr-г олох
+        function updateRowNumbers() {
+            const rows = tableBody.getElementsByTagName("tr");
+            rowCount = rows.length;
+
+            // Мөр бүрийн эхний td (№ багана)-г шинэчлэх
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].cells[0].innerText = i + 1;
+            }
+        }
+        // Enter товч дарахад бүртгэх
+        // Гурван input-ийг массивд хийнэ
+        var inputs = [ovogInput, nerInput, nasInput];
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].addEventListener("keypress", function (e) {
+                if (e.key === "Enter") {
+                    submitBtn.click();
+                }
+
+            });
+
+        }
+    </script>
+</body>
+
+</html>

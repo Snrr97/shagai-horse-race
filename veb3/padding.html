@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Padding Example</title>
+<style>
+/* 1. Бүх талдаа 10px дотор зай */
+.box1 {
+  padding: 100px; 
+  background: rgb(255, 242, 0);
+}
+/* 2. Дээр доор 100px, зүүн баруун 10px */
+.box2 {
+  padding: 100px 10px;  
+  background: rgb(25, 0, 255);
+}
+
+/* 3. дээд, баруун, доод талд зай */
+.box3 {
+  padding: 100px 500px 100px;  
+  background: rgb(255, 0, 43);
+}
+
+/* 4. 4 утга дээд, баруун, доод, зүүн */
+.box4 {
+  padding: 10px 20px 30px 40px;  
+  background: rgb(0, 255, 13); 
+}
+
+/* 5. Тус тусад нь padding өгөх */
+.box5 {
+  padding-top: 10px;    
+  padding-bottom: 20px; 
+  padding-right: 30px;  
+  padding-left: 40px;   
+  background-color: aqua;
+}
+
+div {
+  border: 2px solid black;
+}
+
+</style>
+</head>
+<body>
+
+<div class="box1"> padding 1 тоо байвал бүх тал</div>
+<div class="box2"> padding 2 тоо байвал дээр доор, зүүн баруун </div>
+<div class="box3"> padding 3 тоо байвал дээд, баруун зүүн, доор тал</div>
+<div class="box4"> padding 4 тоо байвал дээр, баруун, доор, зүүн</div>
+<div class="box5"> padding-top, padding-bottom, padding-right, padding-left</div>
+
+</body>
+</html>
+<!--  padding — агуулга болон хүрээний хооронд дотоод зай үүсгэнэ.
+     margin-аас ялгаатай нь padding нь элементийн background-г дүүргэнэ.
+     Дөрвөн утга: дээш  баруун  доош  зүүн -->

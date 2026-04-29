@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<title>Border vs Outline</title>
+<style>
+/* border — элементийн хүрээ. width + style + color гурван утга авна.
+   Layout-д нөлөөлнө: border нийт өргөн/өндөрт НЭМЭГДЭНЭ. */
+.b1 { border: 2px solid #7fffb2;           /* хатуу зураас */ }
+.b2 { border: 3px dashed #ff6b6b;          /* тасархай зураас */ }
+.b3 { border: 4px dotted #6bc5ff;          /* цэгэн зураас */ }
+.b4 { border-top: 4px solid #ffcc44;       /* зөвхөн дээд хүрээ */ }
+.b5 { border: 2px solid #7fffb2; border-radius: 50%; width:64px; height:64px; box-sizing: border-box; }
+.b6 { border: 4px double #6bc5ff;         /* давхар зураас */ }
+.b7 { border: 4px groove #6bc5ff;         /* гүнзгий зураас */ }
+.b8 { border: 4px ridge #6bc5ff;          /* өргөгдсөн зураас */ }
+.b9 { border: 4px inset #6bc5ff;          /* оруулсан зураас */ }
+.b10 { border: 4px outset #6bc5ff;        /* гарсан зураас */ }
+.b11 { border: 4px none #6bc5ff;          /* зураасгүй */ }
+.b12 { border: 4px hidden #6bc5ff;        /* hidden (зарим тохиолдолд none-тэй адил) */ }
+
+/* outline — border-тэй харагдахад адил ГЭХДЭЭ:
+   Layout-д огт нөлөөлдөггүй (нийт хэмжээнд нэмэгддэггүй)
+   outline-offset: хүрээнээс зайтай харуулна
+   Голдуу :focus-д хэрэглэнэ (хандалт, хэрэглээний байдал) */
+.o { outline-width: 3px; outline-color: #6bc5ff; outline-offset: 4px; outline-style: solid; }
+.o1 { outline-style: dotted; }
+.o2 { outline-style: dashed; }
+.o3 { outline-style: solid; }
+.o4 { outline-style: double; }
+.o5 { outline-style: groove; }
+.o6 { outline-style: ridge; }
+.o7 { outline-style: inset; }
+.o8 { outline-style: outset; }
+.o9 { outline-style: none; }   /* none/hidden for completeness */
+.o10 { outline-style: hidden; }
+
+/* Combined border + outline helpers (өнгөөр ялгах) */
+.both { outline-style: solid; outline-width: 4px; outline-offset: 8px; } /* ашиглахад outline-ийг идэвхжүүлнэ */
+.bd-blue   { border: 3px solid #4aa3ff; }   /* border: цэнхэр */
+.bd-green  { border: 3px solid #7fffb2; }   /* border: ногоон */
+.bd-orange { border: 3px solid #ffcc44; }   /* border: шар-алтан */
+.bd-pink   { border: 3px solid #ff6b6b; }   /* border: ягаан */
+
+.ob-pink   { outline-color: #ff6b6b; }      /* outline: ягаан */
+.ob-orange { outline-color: #ffcc44; }      /* outline: шар-алтан */
+.ob-blue   { outline-color: #4aa3ff; }      /* outline: цэнхэр */
+.ob-green  { outline-color: #7fffb2; }      /* outline: ногоон */
+
+/* Туслах стиль */
+.demo { display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding:16px; background:#fafafa; border:1px solid #eee; }
+.box { padding:10px 14px; background:#fff; margin:0; display:inline-block; text-align:center; min-width:84px; }
+.small { padding:8px 10px; min-width:64px; }
+</style>
+</head>
+<body>
+
+<h2>Border vs Outline жишээ</h2>
+
+<div class="demo">
+  <div class="box b1 small">.b1 (solid)</div>
+  <div class="box b2 small">.b2 (dashed)</div>
+  <div class="box b3 small">.b3 (dotted)</div>
+  <div class="box b4 small">.b4 (top)</div>
+  <div class="box b5" aria-hidden="true"></div>
+  <div class="box b6 small">.b6 (double)</div>
+  <div class="box b7 small">.b7 (groove)</div>
+  <div class="box b8 small">.b8 (ridge)</div>
+  <div class="box b9 small">.b9 (inset)</div>
+  <div class="box b10 small">.b10 (outset)</div>
+  <div class="box b11 small">.b11 (none)</div>
+  <div class="box b12 small">.b12 (hidden)</div>
+
+  <!-- Outline examples -->
+  <div class="box o o1 small">.o1 (dotted)</div>
+  <div class="box o o2 small">.o2 (dashed)</div>
+  <div class="box o o3 small">.o3 (solid)</div>
+  <div class="box o o4 small">.o4 (double)</div>
+</div>
+
+<h3>Border ба Outline-ыг нэг дор өнгөөр ялгаж харуулах</h3>
+<div class="demo">
+  <div class="box bd-blue both ob-pink">border: blue<br>outline: pink</div>
+  <div class="box bd-green both ob-orange">border: green<br>outline: orange</div>
+  <div class="box bd-orange both ob-blue">border: orange<br>outline: blue</div>
+  <div class="box bd-pink both ob-green">border: pink<br>outline: green</div>
+</div>
+</body>
+</html>

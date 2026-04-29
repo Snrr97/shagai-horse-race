@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="mn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Modal Form</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* Өнгөний хувьсагчид */
+        :root {
+            --bg-primary: #0a0a12;
+            --bg-card: #111119;
+            --bg-input: #1a1a26;
+            --border-color: #2a2a3c;
+            --text-primary: #eaeaf2;
+            --text-secondary: #6d6d84;
+            --accent: #7c6cf0;
+            --accent-hover: #6858d9;
+            --danger: #ff6b6b;
+            --success: #51cf66;
+        }
+
+        /* Фонт */
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        /* Хуудасны дэвсгэр */
+        body {
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        /* Гарчиг */
+        h1 {
+            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 500;
+        }
+
+        /* Нээх товч */
+        .btn-open {
+            background: linear-gradient(135deg, var(--accent), #9b8cf8);
+            color: #fff;
+            padding: 14px 34px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(124, 108, 240, 0.3);
+        }
+
+        .btn-open:hover {
+            background: linear-gradient(135deg, var(--accent-hover), #8a7ae6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(124, 108, 240, 0.45);
+            color: #fff;
+        }
+
+        /* Modal дэвсгэр */
+        .modal-backdrop.show {
+            backdrop-filter: blur(6px);
+        }
+
+        /* Modal хайрцаг */
+        .modal-content {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        /* X хаах товч */
+        .btn-close-custom {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            transition: all 0.2s;
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .btn-close-custom:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        /* Толгой icon тойрог */
+        .modal-icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #9b8cf8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 24px rgba(124, 108, 240, 0.3);
+        }
+
+        .modal-icon-circle i {
+            font-size: 24px;
+            color: #fff;
+        }
+
+        /* Гарчиг, тайлбар */
+        .modal-title-text {
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* Input icon wrapper */
+        .input-icon-wrap {
+            position: relative;
+        }
+
+        .input-icon-wrap i.field-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 13px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Input, Select загвар */
+        .form-control,
+        .form-select {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 13px;
+            padding: 11px 14px 11px 38px;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: var(--bg-input);
+            border-color: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 3px rgba(124, 108, 240, 0.15);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Алдаатай input */
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: var(--danger);
+            background-color: rgba(255, 107, 107, 0.06);
+            box-shadow: none;
+        }
+
+        .invalid-feedback {
+            color: var(--danger);
+            font-size: 11px;
+        }
+
+        /* Select */
+        .form-select {
+            appearance: none;
+            background-image: none;
+            cursor: pointer;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 11px;
+            pointer-events: none;
+        }
+
+        /* Carousel */
+        .carousel-custom {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #1e1e2a;
+        }
+
+        .carousel-item {
+            height: 220px;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-indicators .active {
+            background-color: var(--text-primary);
+            width: 32px;
+        }
+
+        /* Mobile зургийн жагсаалт */
+        .image-item-mobile {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        /* Цуцлах товч */
+        .btn-cancel-custom {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel-custom:hover {
+            color: var(--text-primary);
+            border-color: #3a3a4c;
+        }
+
+        /* Илгээх товч */
+        .btn-submit-custom {
+            background: linear-gradient(135deg, var(--accent), #9b8cf8);
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(124, 108, 240, 0.25);
+        }
+
+        .btn-submit-custom:hover {
+            background: linear-gradient(135deg, var(--accent-hover), #8a7ae6);
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(124, 108, 240, 0.4);
+        }
+
+        .btn-submit-custom:disabled {
+            opacity: 0.5;
+        }
+
+        /* Амжилтын дэлгэц */
+        .success-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(81, 207, 102, 0.1);
+            border: 2px solid var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: var(--success);
+            margin: 0 auto 18px;
+        }
+
+        .btn-done {
+            background: linear-gradient(135deg, var(--accent), #9b8cf8);
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px 40px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-done:hover {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent-hover), #8a7ae6);
+        }
+
+        .section-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Bootstrap Modal Form Жишээ</h1>
+
+    <!-- Modal нээх товч -->
+    <button class="btn btn-open" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+        <i class="fas fa-plus me-2"></i>Санал хүсэлт илгээх
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content position-relative">
+
+                <!-- Хаах товч -->
+                <button class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <!-- Толгой -->
+                <div class="modal-header flex-column align-items-center border-0 pt-4">
+                    <div class="modal-icon-circle">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h5 class="modal-title-text">Санал хүсэлт</h5>
+                    <p class="modal-subtitle mb-0">Бидэнд санал, сэтгэгдлээ илгээнэ үү</p>
+                </div>
+
+                <!-- Бие хэсэг -->
+                <div class="modal-body">
+
+                    <!-- Форм -->
+                    <div id="formSection">
+                        <form id="feedbackForm" novalidate>
+                            <div class="row g-3">
+
+                                <!-- Нэр -->
+                                <div class="col-6 col-md-3">
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-user field-icon"></i>
+                                        <input type="text" class="form-control" id="nameInput" placeholder="Таны нэр"
+                                            required>
+                                        <div class="invalid-feedback">Нэрээ оруулна уу!</div>
+                                    </div>
+                                </div>
+
+                                <!-- Имэйл -->
+                                <div class="col-6 col-md-3">
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-envelope field-icon"></i>
+                                        <input type="email" class="form-control" id="emailInput"
+                                            placeholder="Имэйл хаяг" required>
+                                        <div class="invalid-feedback" id="emailError">Имэйл оруулна уу!</div>
+                                    </div>
+                                </div>
+
+                                <!-- Сэдэв -->
+                                <div class="col-12 col-md-6">
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-tag field-icon"></i>
+                                        <select class="form-select" id="topicSelect" required>
+                                            <option value="">-- Сэдэв сонгох --</option>
+                                            <option value="suggestion">Санал</option>
+                                            <option value="complaint">Гомдол</option>
+                                            <option value="question">Асуулт</option>
+                                            <option value="other">Бусад</option>
+                                        </select>
+                                        <i class="fas fa-chevron-down select-arrow"></i>
+                                        <div class="invalid-feedback">Сэдэв сонгоно уу!</div>
+                                    </div>
+                                </div>
+
+                                <!-- Утас -->
+                                <div class="col-12 col-md-6">
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-phone field-icon"></i>
+                                        <input type="tel" class="form-control" id="phoneInput"
+                                            placeholder="Утасны дугаар">
+                                    </div>
+                                </div>
+
+                                <!-- Хаяг -->
+                                <div class="col-6 col-md-6">
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-map-marker-alt field-icon"></i>
+                                        <input type="text" class="form-control" id="addressInput" placeholder="Хаяг">
+                                    </div>
+                                </div>
+
+                                <!-- Мессеж -->
+                                <div class="col-6 col-md-12">
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-pen field-icon"></i>
+                                        <input type="text" class="form-control" id="messageInput"
+                                            placeholder="Таны мессеж..." required>
+                                        <div class="invalid-feedback">Мессеж бичнэ үү!</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Зургууд -->
+                            <p class="section-label mt-4">Зургууд:</p>
+
+                            <!-- Mobile: жагсаалт (зөвхөн утсанд) -->
+                            <div class="d-md-none d-flex flex-column gap-2 mb-3">
+                                <!-- Зураг 1 -->
+                                <img src="https://4kwallpapers.com/images/walls/thumbs_2t/23027.jpg"
+                                    class="img-fluid image-item-mobile" alt="Зураг 1">
+                                <!-- Зураг 2 -->
+                                <img src="https://4kwallpapers.com/images/walls/thumbs_3t/25003.jpg"
+                                    class="img-fluid image-item-mobile" alt="Зураг 2">
+                                <!-- Зураг 3 -->
+                                <img src="https://4kwallpapers.com/images/walls/thumbs_2t/25777.jpg"
+                                    class="img-fluid image-item-mobile" alt="Зураг 3">
+                            </div>
+
+                            <!-- Desktop: carousel (зөвхөн компьютерт) -->
+                            <div id="imageCarousel" class="carousel slide carousel-custom d-none d-md-block mb-3"
+                                data-bs-ride="false">
+                                <div class="carousel-inner">
+                                    <!-- Зураг 1 -->
+                                    <div class="carousel-item active">
+                                        <img src="https://4kwallpapers.com/images/walls/thumbs_2t/23027.jpg"
+                                            class="d-block w-100" alt="Зураг 1">
+                                    </div>
+                                    <!-- Зураг 2 -->
+                                    <div class="carousel-item">
+                                        <img src="https://4kwallpapers.com/images/walls/thumbs_3t/25003.jpg"
+                                            class="d-block w-100" alt="Зураг 2">
+                                    </div>
+                                    <!-- Зураг 3 -->
+                                    <div class="carousel-item">
+                                        <img src="https://4kwallpapers.com/images/walls/thumbs_2t/25777.jpg"
+                                            class="d-block w-100" alt="Зураг 3">
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel"
+                                    data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel"
+                                    data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+                            </div>
+
+                            <!-- Товчлуурууд -->
+                            <div class="d-flex gap-2 mt-4 flex-column flex-md-row">
+                                <button type="button" class="btn btn-cancel-custom flex-fill"
+                                    data-bs-dismiss="modal">Цуцлах</button>
+                                <button type="submit" class="btn btn-submit-custom flex-fill flex-md-grow-1"
+                                    id="submitBtn" style="flex:2 !important;">Илгээх</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Амжилтын дэлгэц -->
+                    <div id="successSection" class="text-center py-4" style="display:none;">
+                        <div class="success-circle">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h5 class="text-light mb-2">Амжилттай илгээгдлээ!</h5>
+                        <p class="text-secondary mb-4">Таны санал хүсэлтийг хүлээн авлаа. Баярлалаа!</p>
+                        <button class="btn btn-done" data-bs-dismiss="modal">Хаах</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const form = document.getElementById('feedbackForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const emailInput = document.getElementById('emailInput');
+        const emailError = document.getElementById('emailError');
+
+        // Форм илгээх
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            let isValid = true;
+
+            // Заавал бөглөх талбаруудыг шалгах
+            form.querySelectorAll('[required]').forEach(function (field) {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            // Имэйл формат шалгах
+            if (emailInput.value && !emailInput.value.includes('@')) {
+                emailInput.classList.add('is-invalid');
+                emailError.textContent = 'Зөв имэйл оруулна уу!';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Илгээж байна...
+            submitBtn.textContent = 'Илгээж байна...';
+            submitBtn.disabled = true;
+
+            // 1 секундын дараа амжилт харуулах
+            setTimeout(function () {
+                document.getElementById('formSection').style.display = 'none';
+                document.getElementById('successSection').style.display = 'block';
+            }, 1000);
+        });
+
+        // Бичиж эхлэхэд алдаа арилгах
+        form.querySelectorAll('.form-control, .form-select').forEach(function (field) {
+            field.addEventListener('input', function () {
+                this.classList.remove('is-invalid');
+            });
+        });
+
+        // Modal хаагдахад форм цэвэрлэх
+        document.getElementById('feedbackModal').addEventListener('hidden.bs.modal', function () {
+            form.reset();
+            form.querySelectorAll('.is-invalid').forEach(function (el) {
+                el.classList.remove('is-invalid');
+            });
+            document.getElementById('formSection').style.display = 'block';
+            document.getElementById('successSection').style.display = 'none';
+            submitBtn.textContent = 'Илгээх';
+            submitBtn.disabled = false;
+        });
+    </script>
+
+</body>
+
+</html>

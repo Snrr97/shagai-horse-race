@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<title>Opacity Demo</title>
+<style>
+/* border — элементийн хүрээ */
+.b1 { border: 2px solid #7fffb2; }
+.b2 { border: 3px dashed #ff6b6b; }
+.b3 { border: 4px dotted #6bc5ff; }
+.b4 { border-top: 4px solid #ffcc44; }
+/* outline */
+.o1 {
+  outline: 3px solid #ff6b6b;
+  outline-offset: 4px;
+}
+/* opacity helpers */
+.opacity-100 { opacity: 1; }
+.opacity-75  { opacity: 0.75; }
+.opacity-50  { opacity: 0.5; }
+.opacity-25  { opacity: 0.25; }
+/* layout helpers */
+.demo { background-image: url("../../Desktop/Image.jpeg");,display:flex; gap:12px; align-items:center; padding:16px; border:1px solid #eee; flex-wrap:wrap; }
+.box { padding:10px 14px; background:#fff; display:inline-block; text-align:center; min-width:100px; }
+.small { padding:8px 10px; min-width:64px; }
+</style>
+</head>
+<body>
+<h2>Opacity жишээ</h2>
+<div class="demo">
+  <div class="box b1 o1 opacity-100">opacity: 1</div>
+  <div class="box b1 o1 opacity-75">opacity: 0.75</div>
+  <div class="box b1 o1 opacity-50">opacity: 0.5</div>
+  <div class="box b1 o1 opacity-25">opacity: 0.25</div>
+</div>
+</body>
+</html>
+<!-- opacity нь 0-ээс 1 хүртэлх утга авдаг бөгөөд элементийн бүхэл агуулгыг (текст, хүү элемент, зураг) нэгэн зэрэг ил тод болгодог -->

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Судлах</title>
+</head>
+<body>
+<style>
+    :root{
+        --bg : #7fa3d5;
+    }
+    body {
+        background-color: var(--bg);
+    }
+
+</style>
+<h2>input</h2>
+<input type="text" placeholder="Нэр">
+<input type="email" placeholder="И-мэйл">
+<input type="password" placeholder="Нууц үг">
+<input type="checkbox"> HTML
+<input type="radio" name="r"> Тийм
+<input type="radio" name="r"> Үгүй
+
+<h2>select</h2>
+<select>
+  <option>Монгол</option>
+  <option>Америк</option>
+  <option>Япон</option>
+</select>
+
+<h2>textarea</h2>
+<textarea rows="3" cols="30" placeholder="Бичнэ үү..."></textarea>
+
+<h2>form</h2>
+<form action="/submit" method="POST">
+  <label for="name">Нэр:</label>
+  <input type="text" placeholder="Нэр" required><br><br>
+  <select><option>Монгол</option><option>Америк</option></select><br><br>
+  <textarea rows="3" placeholder="Мессеж">text</textarea><br><br>
+  <button type="submit">Илгээх</button>
+</form>
+</body>
+</html>

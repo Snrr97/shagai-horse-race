@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<title>!important жишээ</title>
+<style>
+/* !important — !important бол энэ зэрэглэлийг огт харгалзахгүйгээр бүгдийг дардаг онцгой тохиолдол */
+/* Specificity: 0-0-1 → хамгийн бага */
+.row-box              { color: gray !important; }
+/* Specificity: 0-1-0 → .color-blue нь .row-box-ыг дарна */
+.color-blue           { color: #6bc5ff; }
+/* Specificity: 0-2-0 → өндөр */
+.row-box.color-blue   { color: #6bc5ff; }
+/* !important → ямар specificity байсан ч ялна */
+.force-green { color: #7fffb2 ; }
+.force-red   { color: #ff6b6b !important; }
+.force-yellow{ color: #ffcc44 !important; }
+/* Демo стили */
+.demo { display:flex; gap:12px; align-items:center; padding:16px; background:#fafafa; border:1px solid #eee; flex-wrap:wrap; }
+.box { padding:10px 14px; background:#fff; border:1px solid #ddd; border-radius:6px; min-width:120px; text-align:center; font-weight:600; }
+.small { min-width:90px; padding:8px 10px; }
+.note { font-size:14px; color:#555; margin-top:12px; }
+</style>
+</head>
+<body>
+<h2>!important жишээ</h2>
+
+<p class="note">Доорх элементүүд дээр дүрмийн давуу байдлыг ажигла.</p>
+
+<div class="demo">
+  <div class="box row-box small">.row-box (gray)</div>
+  <div class="box color-blue small">.color-blue (blue)</div>
+  <div class="box row-box color-blue small">.row-box + .color-blue → blue</div>
+  <div class="box row-box force-green small">.row-box + .force-green → green (!important)</div>
+  <div class="box color-blue force-red small">.color-blue + .force-red → red (!important)</div>
+  <div class="box row-box color-blue force-yellow small">.row-box .color-blue .force-yellow → yellow (!important)</div>
+</div>
+</body>
+</html>
