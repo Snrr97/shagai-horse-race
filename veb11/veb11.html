@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>FileReader()</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <h1>FileReader()</h1>
+
+    <hr>
+
+    <!-- ===== ЗУРАГ ===== -->
+    <h3>Image</h3>
+    <input type="file" id="imgInput">
+    <br><br>
+    <img id="preview" src="" width="500" style="display:none;">
+
+    <hr>
+
+    <!-- ===== EXCEL ===== -->
+    <h3>Excel</h3>
+    <input type="file" id="xlsxInput">
+    <br><br>
+    <div id="tableArea"></div>
+
+    <script>
+
+        //  1. ЗУРАГ УНШИX
+
+        // HTML элементүүдийг олох
+        var imgInput = document.getElementById("imgInput");
+        var preview = document.getElementById("preview");
+
+        // Файл сонгоход ажиллах функц
+        imgInput.onchange = function () {
+
+            // Сонгосон файлыг авах
+            var file = imgInput.files[0];
+
+            // FileReader үүсгэх
+            var reader = new FileReader();
+
+            // Файлыг Base64 болгон уншиx
+            reader.readAsDataURL(file);
+
+            // Уншиж дуусахад:
+            reader.onload = function () {
+                preview.src = reader.result;
+                // Зургийг харуулах
+                preview.style.display = "block";
+            };
+        };
+
+        //  2. EXCEL УНШИX
+
+        // HTML элементүүдийг олох
+        var xlsxInput = document.getElementById("xlsxInput");
+        var tableArea = document.getElementById("tableArea");
+
+        // Файл сонгоход ажиллах функц
+        xlsxInput.onchange = function () {
+
+            var file = xlsxInput.files[0];
+
+            var reader = new FileReader();
+
+            // Файлыг binary болгон уншиx
+            reader.readAsArrayBuffer(file);
+
+            // Уншиж дуусахад:
+            reader.onload = function () {
+
+                // Binary өгөгдлийг byte массив болгох
+                var data = new Uint8Array(reader.result);
+
+                // SheetJS ашиглан Excel файлыг уншиx
+                var workbook = XLSX.read(data);
+
+                // Эхний sheet-ийг авах
+                var sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+                // Sheet-ийг массив болгох
+                var rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                // Хүснэгт бүтээх
+                var html = "<table border='1'>";
+                for (var i = 0; i < rows.length; i++) {
+                    html = html + "<tr>";
+                    for (var j = 0; j < rows[i].length; j++) {
+                        if (i == 0) {
+                            html = html + "<td><b>" + rows[i][j] + "</b></td>";
+                        } else {
+                            html = html + "<td>" + rows[i][j] + "</td>";
+                        }
+                    }
+
+                    html = html + "</tr>";
+                }
+
+                html = html + "</table>";
+
+                // Хүснэгтийг дэлгэцэнд гаргах
+                tableArea.innerHTML = html;
+            };
+        };
+
+    </script>
+
+</body>
+
+</html>

@@ -924,13 +924,7 @@
             el.horseCount.textContent = '—';
             el.horseCount.classList.remove('big');
 
-            // Шагайг анхны байдалд оруулах
-            const initial = [
-                { name: 'хонь', icon: '🐑', isHorse: false },
-                { name: 'ямаа', icon: '🐐', isHorse: false },
-                { name: 'тэмээ', icon: '🐪', isHorse: false },
-                { name: 'хонь', icon: '🐑', isHorse: false },
-            ];
+
             el.tossArea.querySelectorAll('.shagai').forEach((s, i) => {
                 s.classList.remove('rolling', 'morin');
                 s.querySelector('.face').innerHTML = `<span class="icon">${initial[i].icon}</span>${initial[i].name}`;
